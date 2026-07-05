@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>WEDDING QUEST · 우신범 & 김한아</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/galmuri/dist/galmuri.css" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- =========================================================
+     꽃잎 파티클 효과 — 화면 전체에 살짝 흩날리는 장식.
+     이미지 교체: images/petals/petal1.png ~ petal4.png 를
+     같은 파일명으로 덮어쓰면 바로 반영됩니다. (투명 배경 PNG, 60x60px 내외 권장)
+     JS(script.js)가 이 4장을 랜덤하게 섞어서 개수/위치/속도를 정합니다.
+========================================================== -->
+<div class="petal-layer" id="petalLayer" aria-hidden="true"></div>
+
+<div class="phone">
+
+  <!-- =========================================================
+       HERO
+       배경(bg-castle.png)은 고정. 구름/땅 이미지만 좌우로 무한 스크롤.
+       이미지를 교체하려면 /images 폴더의 같은 파일명을 덮어쓰면 됩니다.
+  ========================================================== -->
+  <section class="hero" id="hero">
+
+    <!-- 1) 정적 배경 (움직이지 않음)
+         이 img의 원본 픽셀 크기가 곧 히어로 전체 높이가 됩니다.
+         이미지를 다른 크기로 바꾸면 별도 설정 없이 자동으로 맞춰집니다. -->
+    <img src="images/bg-castle.png" class="hero-bg-img" alt="">
+
+    <!-- 2) 구름 레이어 (좌→우 무한 스크롤) -->
+    <div class="scroll-layer clouds-layer">
+      <div class="scroll-track cloud-track">
+        <img src="images/clouds.png" class="tile" alt="">
+        <img src="images/clouds.png" class="tile" alt="">
+      </div>
+    </div>
+
+    <!-- 타이틀 로고 이미지 -->
+    <img src="images/title-logo.png" class="title-logo-img" alt="우신범 한아 결혼식">
+
+    <!-- 캐릭터 (기존 도트 캐릭터 유지 - 별도 이미지 파일 없음) -->
+    <div class="sprite-row">
+      <div class="sprite-wrap">
+        <svg id="sprGroom" viewBox="0 0 10 10"></svg>
+      </div>
+      <div class="heart-fx"><svg id="iconHeart1" viewBox="0 0 7 6"></svg></div>
+      <div class="sprite-wrap">
+        <svg id="sprBride" viewBox="0 0 10 10"></svg>
+      </div>
+    </div>
+
+    <!-- 3) 땅 레이어 (좌→우 무한 스크롤, 구름보다 빠르게) -->
+    <div class="scroll-layer ground-layer">
+      <div class="scroll-track ground-track">
+        <img src="images/ground.png" class="tile" alt="">
+        <img src="images/ground.png" class="tile" alt="">
+      </div>
+    </div>
+
+    <!-- 날짜 리본 이미지 -->
+    <img src="images/date-ribbon.png" class="date-ribbon-img" alt="2026.10.31 (토) AM 11:30">
+
+    <div class="press-start pixel-font">▼ SCROLL TO CONTINUE ▼</div>
+  </section>
+
+  <!-- DIALOGUE / GREETING -->
+  <section class="section fade-up">
+    <div class="eyebrow">STORY</div>
+    <div class="dialogue">
+      <svg id="sprGroom2" viewBox="0 0 10 10"></svg>
+      <div class="speech">
+        어느 날, 서로 다른 길을 걷던 두 사람이 같은 세계에서 만나 친구가 되고,<br>
+        가장 믿음직한 파티원이 되었습니다.<br><br>
+        함께 걷는 시간은 예상보다 훨씬 즐겁고 따뜻했으며,<br>
+        덕분에 어떤 난관도 웃으며 지나올 수 있었습니다.<br><br>
+        이제 저희는 <b>새로운 스토리</b>를 시작하려 합니다.<br>
+        가장 설레는 첫 장면에 소중한 여러분을 모시고 싶습니다.<br><br>
+        함께해 주셔서 저희의 새로운 모험을 따뜻하게 축복해 주시면 감사하겠습니다.
+        <span class="cursor">▼</span>
+      </div>
+    </div>
+    <div class="party-card">
+      <b>PARTY 1</b> 우덕환 · 황금순 의 장남 <b>신범</b><br>
+      <b>PARTY 2</b> 김용진 · 김미자 의 장녀 <b>한아</b>
+    </div>
+  </section>
+
+  <!-- QUEST CALENDAR -->
+  <section class="section fade-up">
+    <div class="eyebrow">QUEST LOG</div>
+    <div class="pixel-box">
+      <div class="cal-title">2026 . OCTOBER</div>
+      <div class="cal-grid" id="calGrid"></div>
+      <div class="quest-line" id="ddayCount"></div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       OUR STORY — 사진 갤러리
+       사진 교체: images/gallery/photo1.jpg ~ photo9.jpg 를 같은 파일명으로 덮어쓰세요.
+       (정사각형에 가깝게, 800x800px 이상 권장 / 자동으로 정사각형에 꽉 차게 잘려서 표시됩니다)
+       액자 테두리: images/gallery-frame.png 파일을 넣으면 자동으로 사진 위에 씌워집니다.
+       파일이 없으면 테두리 없이 사진만 깔끔하게 보입니다.
+
+       구현 방식: 화면에는 항상 이전/현재/다음, 딱 3장의 <img>만 존재합니다(가벼움).
+       사진이 9장이든 90장이든 DOM은 늘어나지 않고, 이동할 때마다 이 3장의
+       src만 바꿔치기해서 무한 루프처럼 보이게 만듭니다.
+  ========================================================== -->
+  <section class="section fade-up">
+    <div class="eyebrow">OUR STORY</div>
+    <h2 class="sec-title">우리의 순간들</h2>
+
+    <div class="gallery-wrap">
+      <button class="gallery-arrow left" onclick="galleryMove(-1)" aria-label="이전 사진">◀</button>
+
+      <div class="gallery-viewport" id="galleryViewport">
+        <div class="gallery-track" id="galleryTrack">
+          <div class="gallery-slide"><img class="gallery-photo" id="slotPrev" src="" alt=""><img class="gallery-frame" src="images/gallery-frame.png" alt="" onerror="this.style.display='none'"></div>
+          <div class="gallery-slide"><img class="gallery-photo" id="slotCurr" src="" alt=""><img class="gallery-frame" src="images/gallery-frame.png" alt="" onerror="this.style.display='none'"></div>
+          <div class="gallery-slide"><img class="gallery-photo" id="slotNext" src="" alt=""><img class="gallery-frame" src="images/gallery-frame.png" alt="" onerror="this.style.display='none'"></div>
+        </div>
+      </div>
+
+      <button class="gallery-arrow right" onclick="galleryMove(1)" aria-label="다음 사진">▶</button>
+    </div>
+
+    <div class="gallery-dots" id="galleryDots"></div>
+  </section>
+
+  <!-- STAGE MAP -->
+  <section class="section fade-up">
+    <div class="eyebrow">STAGE MAP</div>
+    <div class="venue-name">대구 중앙컨벤션센터</div>
+    <div class="venue-addr">대구광역시 북구 호암로 51 (침산동, 컨벤션동)</div>
+    <div class="copy-row">
+      <button class="pixel-btn small" onclick="copyText('대구광역시 북구 호암로 51 (침산동, 컨벤션동)', this)">주소 복사</button>
+    </div>
+    <div class="crt">
+      <div class="screen">
+        <iframe src="https://maps.google.com/maps?q=%EB%8C%80%EA%B5%AC%EA%B4%91%EC%97%AD%EC%8B%9C%20%EB%B6%81%EA%B5%AC%20%ED%98%B8%EC%95%94%EB%A1%9C%2051&output=embed" loading="lazy" allowfullscreen></iframe>
+        <div class="scanlines"></div>
+      </div>
+      <div class="screw tl"></div><div class="screw tr"></div><div class="screw bl"></div><div class="screw br"></div>
+    </div>
+    <div class="map-links">
+      <a href="https://map.naver.com/v5/search/대구광역시 북구 호암로 51 중앙컨벤션센터" target="_blank" rel="noopener"><button class="pixel-btn small full">네이버지도</button></a>
+      <a href="https://map.kakao.com/link/search/대구광역시 북구 호암로 51 중앙컨벤션센터" target="_blank" rel="noopener"><button class="pixel-btn small full">카카오맵</button></a>
+    </div>
+  </section>
+
+  <!-- ITEM SHOP / ACCOUNTS -->
+  <section class="section fade-up">
+    <div class="eyebrow">ITEM SHOP</div>
+    <h2 class="sec-title">마음 전하실 곳</h2>
+    <div class="acc-tabs">
+      <div class="acc-tab active" data-tab="groom" onclick="switchTab('groom')">신랑측</div>
+      <div class="acc-tab" data-tab="bride" onclick="switchTab('bride')">신부측</div>
+    </div>
+
+    <div class="acc-group active" id="tab-groom">
+      <div class="item-slot">
+        <svg class="ic-coin" viewBox="0 0 8 8"></svg>
+        <div class="item-info"><div class="who">신랑 우신범</div><div class="num">기업은행 552-048765-01-010</div></div>
+        <div class="item-actions">
+          <button class="pixel-btn small" onclick="copyText('기업은행 552-048765-01-010 (우신범)', this)">복사</button>
+          <a class="pixel-btn small pink" href="여기에_카카오페이_송금링크" target="_blank" rel="noopener" onclick="return checkKakaoLink(this)">카톡송금</a>
+        </div>
+      </div>
+      <div class="item-slot">
+        <svg class="ic-coin" viewBox="0 0 8 8"></svg>
+        <div class="item-info"><div class="who">신랑 父 우덕환</div><div class="num">K뱅크 100-216-581458</div></div>
+        <div class="item-actions">
+          <button class="pixel-btn small" onclick="copyText('K뱅크 100-216-581458 (우덕환)', this)">복사</button>
+          <a class="pixel-btn small pink" href="여기에_카카오페이_송금링크" target="_blank" rel="noopener" onclick="return checkKakaoLink(this)">카톡송금</a>
+        </div>
+      </div>
+      <div class="item-slot">
+        <svg class="ic-coin" viewBox="0 0 8 8"></svg>
+        <div class="item-info"><div class="who">신랑 母 황금순</div><div class="num">우리은행 447-278701-02-001</div></div>
+        <div class="item-actions">
+          <button class="pixel-btn small" onclick="copyText('우리은행 447-278701-02-001 (황금순)', this)">복사</button>
+          <a class="pixel-btn small pink" href="여기에_카카오페이_송금링크" target="_blank" rel="noopener" onclick="return checkKakaoLink(this)">카톡송금</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="acc-group" id="tab-bride">
+      <div class="item-slot">
+        <svg class="ic-gift" viewBox="0 0 9 9"></svg>
+        <div class="item-info"><div class="who">신부 김한아</div><div class="num">하나은행 367-910018-47105</div></div>
+        <div class="item-actions">
+          <button class="pixel-btn small" onclick="copyText('하나은행 367-910018-47105 (김한아)', this)">복사</button>
+          <a class="pixel-btn small pink" href="여기에_카카오페이_송금링크" target="_blank" rel="noopener" onclick="return checkKakaoLink(this)">카톡송금</a>
+        </div>
+      </div>
+      <div class="item-slot">
+        <svg class="ic-gift" viewBox="0 0 9 9"></svg>
+        <div class="item-info"><div class="who">신부 父 김용진</div><div class="num">농협 152-02-461863</div></div>
+        <div class="item-actions">
+          <button class="pixel-btn small" onclick="copyText('농협 152-02-461863 (김용진)', this)">복사</button>
+          <a class="pixel-btn small pink" href="여기에_카카오페이_송금링크" target="_blank" rel="noopener" onclick="return checkKakaoLink(this)">카톡송금</a>
+        </div>
+      </div>
+      <div class="item-slot">
+        <svg class="ic-gift" viewBox="0 0 9 9"></svg>
+        <div class="item-info"><div class="who">신부 母 김미자</div><div class="num">신한은행 110-555-276995</div></div>
+        <div class="item-actions">
+          <button class="pixel-btn small" onclick="copyText('신한은행 110-555-276995 (김미자)', this)">복사</button>
+          <a class="pixel-btn small pink" href="여기에_카카오페이_송금링크" target="_blank" rel="noopener" onclick="return checkKakaoLink(this)">카톡송금</a>
+        </div>
+      </div>
+    </div>
+    <p class="acc-note">"카톡송금" 버튼은 각자의 카카오페이 개인 송금 링크를 연결해야 작동합니다. 아래 README를 참고해 링크를 넣어주세요.</p>
+  </section>
+
+  <!-- MESSAGE BOARD -->
+  <section class="section fade-up">
+    <div class="eyebrow">MESSAGE BOARD</div>
+    <h2 class="sec-title">방명록</h2>
+    <div class="pixel-box" style="margin-bottom:20px;">
+      <input type="text" class="pixel-input" id="gbName" placeholder="이름" maxlength="20">
+      <textarea class="pixel-input" id="gbMsg" placeholder="따뜻한 축하 메시지를 남겨주세요" maxlength="200"></textarea>
+      <button class="pixel-btn pink full" id="gbSubmit" onclick="submitGuestbook()">메시지 등록</button>
+    </div>
+    <div id="gbPreview"></div>
+    <button class="pixel-btn small gb-more" id="gbMoreBtn" onclick="openGuestbookModal()" style="display:none;">방명록 전체보기</button>
+  </section>
+
+  <!-- FLOWER DIVIDER -->
+  <div class="flower-divider" style="background-image:url('images/flower-divider.png');"></div>
+
+  <!-- FOOTER
+       기본값은 은은한 크림색 배경입니다 (엔딩에 성/하늘 이미지를 재사용하니 어색해서 제외했습니다).
+       나만의 엔딩 이미지를 넣고 싶다면 images/footer-bg.png 를 추가한 뒤
+       아래 div에 style="background-image:url('images/footer-bg.png');" 를 넣어주세요. -->
+  <div class="footer">
+    <div class="footer-inner">
+      <svg id="iconHeart2" viewBox="0 0 7 6"></svg>
+      <div class="thanks">THE END. 감사합니다 !</div>
+      <div class="small pixel-font">WOO SHINBEOM &amp; KIM HANA<br>2026.10.31</div>
+      <div class="share-row">
+        <button class="pixel-btn small pink" onclick="shareKakao()">카카오톡 공유</button>
+        <button class="pixel-btn small" onclick="shareCopyLink()">링크 복사</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Guestbook Modal -->
+<div class="modal-overlay" id="gbModal">
+  <div class="modal-sheet">
+    <div class="modal-head">
+      <h3 class="pixel-font">LOG BOOK</h3>
+      <button class="modal-close" onclick="closeGuestbookModal()">X</button>
+    </div>
+    <div class="modal-body" id="gbFullList"></div>
+  </div>
+</div>
+
+<!-- Gallery Lightbox -->
+<div class="lightbox-overlay" id="lightboxOverlay" onclick="closeLightboxBg(event)">
+  <button class="lightbox-close" onclick="closeLightbox()" aria-label="닫기">X</button>
+  <div class="lightbox-box pixel-box">
+    <img id="lightboxImg" src="" alt="">
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>

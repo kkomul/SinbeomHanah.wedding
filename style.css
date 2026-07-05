@@ -1,0 +1,559 @@
+:root{
+  --cream:#FFF7E4;
+  --cream-deep:#FFEFC9;
+  --dark:#3E2C23;
+  --mid:#7A5B3F;
+  --pink:#FF8FAB;
+  --pink-deep:#E85D89;
+  --blue:#5B8DEF;
+  --blue-deep:#3A63C2;
+  --yellow:#FFD35C;
+  --yellow-deep:#E8A93A;
+  --green:#8BC34A;
+  --green-deep:#5E9C2F;
+  --ink:#3A2E22;
+  --white:#FFFFFF;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{background:#DCEEF7;}
+body{
+  font-family:'Galmuri11','Galmuri9', sans-serif;
+  color:var(--ink);
+  display:flex;
+  justify-content:center;
+}
+.pixel-font{ font-family:'Press Start 2P', 'Galmuri11', monospace; }
+/* =========================================================
+   꽃잎 파티클 (전체 페이지에 흩날리는 장식)
+   이미지 교체: images/petals/petal1.png ~ petal4.png
+========================================================= */
+.petal-layer{
+  position:fixed;
+  top:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:100%;
+  max-width:700px;  /* 데스크톱 등 넓은 화면에서도 청첩장 폭 안에서만 흩날리게 제한 */
+  height:100%;
+  overflow:hidden;
+  pointer-events:none;
+  z-index:60;
+}
+.petal{
+  position:absolute;
+  top:-10%;
+  left:calc(var(--x) * 1%);
+  width:calc(var(--size) * 1px);
+  height:auto;
+  opacity:0;
+  animation-name:petalFall;
+  animation-timing-function:linear;
+  animation-iteration-count:infinite;
+  animation-duration:var(--duration);
+  animation-delay:var(--delay);
+  will-change:transform, opacity;
+}
+@keyframes petalFall{
+  0%   { transform:translate3d(0, -10vh, 0) rotate(0deg); opacity:0; }
+  8%   { opacity:.9; }
+  25%  { transform:translate3d(calc((var(--drift) * 0.25 + var(--sway)) * 1px), 28vh, 0) rotate(calc(var(--rot) * 1deg)); }
+  50%  { transform:translate3d(calc((var(--drift) * 0.5  - var(--sway)) * 1px), 54vh, 0) rotate(calc(var(--rot) * -1deg)); }
+  75%  { transform:translate3d(calc((var(--drift) * 0.75 + var(--sway)) * 1px), 80vh, 0) rotate(calc(var(--rot) * 1deg)); }
+  92%  { opacity:.9; }
+  100% { transform:translate3d(calc(var(--drift) * 1px), 115vh, 0) rotate(0deg); opacity:0; }
+}
+
+.phone{
+  width:100%;
+  max-width:460px;
+  background:#F4FBFF;
+  min-height:100vh;
+  position:relative;
+  overflow:hidden;
+}
+svg{ shape-rendering:crispEdges; }
+img{ image-rendering:pixelated; image-rendering:crisp-edges; }
+
+/* ================= pixel UI kit (buttons / boxes / inputs) ================= */
+.pixel-box{
+  background:var(--cream);
+  border:4px solid var(--dark);
+  box-shadow: inset 0 0 0 3px var(--white);
+  clip-path: polygon(
+    0 8px, 8px 8px, 8px 0, calc(100% - 8px) 0, calc(100% - 8px) 8px, 100% 8px,
+    100% calc(100% - 8px), calc(100% - 8px) calc(100% - 8px), calc(100% - 8px) 100%,
+    8px 100%, 8px calc(100% - 8px), 0 calc(100% - 8px)
+  );
+  padding:20px 18px;
+}
+.pixel-btn{
+  font-family:'Galmuri11', sans-serif;
+  font-weight:700;
+  font-size:13px;
+  border:3px solid var(--dark);
+  background:var(--yellow);
+  color:var(--ink);
+  padding:10px 16px;
+  cursor:pointer;
+  box-shadow: inset -3px -3px 0 var(--yellow-deep), inset 3px 3px 0 #FFF6D0;
+  clip-path: polygon(0 4px,4px 4px,4px 0,calc(100% - 4px) 0,calc(100% - 4px) 4px,100% 4px,100% calc(100% - 4px),calc(100% - 4px) calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,4px calc(100% - 4px),0 calc(100% - 4px));
+  transition:transform .05s ease;
+}
+.pixel-btn:active{
+  box-shadow: inset 3px 3px 0 var(--yellow-deep), inset -3px -3px 0 #FFF6D0;
+  transform:translateY(2px);
+}
+.pixel-btn:disabled{ opacity:.5; cursor:default; }
+.pixel-btn.blue{ background:var(--blue); color:#fff; box-shadow: inset -3px -3px 0 var(--blue-deep), inset 3px 3px 0 #AFCBFF; }
+.pixel-btn.pink{ background:var(--pink); color:#fff; box-shadow: inset -3px -3px 0 var(--pink-deep), inset 3px 3px 0 #FFC9D8; }
+.pixel-btn.small{ font-size:11px; padding:7px 10px; }
+.pixel-btn.full{ width:100%; }
+
+.pixel-input{
+  width:100%;
+  border:3px solid var(--dark);
+  background:#FFFFFF;
+  padding:10px 12px;
+  font-family:'Galmuri11', sans-serif;
+  font-size:13.5px;
+  color:var(--ink);
+  margin-bottom:10px;
+  box-shadow: inset 2px 2px 0 #00000010;
+}
+textarea.pixel-input{ resize:none; height:64px; }
+
+.section{ padding:44px 22px; position:relative; }
+.fade-up{ opacity:0; transform:translateY(16px); transition:opacity .7s ease, transform .7s ease; }
+.fade-up.in{ opacity:1; transform:translateY(0); }
+
+.eyebrow{
+  text-align:center;
+  font-size:10px;
+  letter-spacing:1px;
+  color:var(--mid);
+  margin-bottom:10px;
+}
+.eyebrow::before, .eyebrow::after{ content:'◆'; margin:0 8px; color:var(--pink); font-size:8px; }
+
+h2.sec-title{
+  text-align:center;
+  font-size:15px;
+  margin-bottom:22px;
+  color:var(--ink);
+  letter-spacing:0.5px;
+}
+
+/* =========================================================
+   HERO — image-based layers
+   1) .hero-bg      : 정적 배경 (움직이지 않음)
+   2) .clouds-layer : 구름, 좌→우 무한 스크롤
+   3) .ground-layer : 땅, 좌→우 무한 스크롤 (구름보다 빠르게)
+   이미지 교체는 /images 폴더의 파일만 바꾸면 됩니다.
+========================================================= */
+.hero{
+  position:relative;
+  width:100%;
+  overflow:hidden;
+}
+
+/* 1) 정적 배경 : 일반 흐름(in-flow) 이미지라서
+   히어로 전체 높이가 이 이미지의 실제 비율을 그대로 따라갑니다.
+   → 세로 길이를 직접 정하고 싶다면 이 이미지의 픽셀 크기만 바꾸면 됩니다.
+   → 가로 폭은 460px 로 맞추면 다른 리소스(구름/땅/로고 등)와 정렬이 맞습니다.
+   → 세로 길이는 자유롭게 정해도 됩니다 (코드가 자동으로 맞춰줍니다). */
+.hero-bg-img{
+  display:block;
+  width:100%;
+  height:auto;
+  position:relative;
+  z-index:0;
+}
+
+/* 공용 스크롤 레이어 컴포넌트 */
+.scroll-layer{
+  position:absolute;
+  left:0;
+  width:100%;
+  overflow:hidden;
+  z-index:1;
+}
+.scroll-track{
+  display:flex;
+  width:200%;
+  height:100%;
+}
+.scroll-track .tile{
+  width:50%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  flex-shrink:0;
+}
+
+/* 2) 구름 레이어 */
+.clouds-layer{
+  top:8%;
+  height:22%;
+  opacity:.9;
+}
+.cloud-track{
+  animation:scrollLeft 48s linear infinite;
+}
+
+/* 3) 땅 레이어 (구름보다 빠른 속도로 패럴럭스 효과) */
+.ground-layer{
+  bottom:14%;
+  height:17%;
+}
+.ground-track{
+  animation:scrollLeft 16s linear infinite;
+}
+
+@keyframes scrollLeft{
+  from{ transform:translateX(0); }
+  to{ transform:translateX(-50%); }
+}
+
+/* 타이틀 로고 이미지 — 히어로 높이에 대한 비율(top %)로 위치를 잡습니다 */
+.title-logo-img{
+  position:absolute;
+  z-index:2;
+  top:7%;
+  left:50%;
+  transform:translateX(-50%);
+  width:68%;
+  max-width:280px;
+}
+
+/* 캐릭터 스프라이트 (기존 도트 캐릭터 - 코드로 그려짐) */
+.sprite-row{
+  position:absolute;
+  z-index:2;
+  top:58%;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  gap:16px;
+}
+.sprite-wrap svg{ width:58px; height:58px; }
+.heart-fx svg{ width:26px; height:26px; animation:bounce 1.4s ease-in-out infinite; }
+@keyframes bounce{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-8px);} }
+
+/* 날짜 리본 이미지 */
+.date-ribbon-img{
+  position:absolute;
+  z-index:2;
+  top:85%;
+  left:50%;
+  transform:translateX(-50%);
+  width:70%;
+  max-width:300px;
+}
+
+.press-start{
+  position:absolute;
+  z-index:2;
+  top:95%;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:9px;
+  color:var(--mid);
+  letter-spacing:1px;
+  white-space:nowrap;
+  animation:blink 1.2s steps(1) infinite;
+}
+@keyframes blink{ 50%{ opacity:0; } }
+
+/* ---------- GALLERY (OUR STORY) ---------- */
+.gallery-wrap{
+  position:relative;
+  width:100%;
+  max-width:320px;
+  margin:0 auto;
+}
+.gallery-viewport{
+  width:100%;
+  aspect-ratio:1/1;
+  overflow:hidden;
+  position:relative;
+  touch-action:pan-y;
+}
+.gallery-track{
+  display:flex;
+  width:300%;   /* 이전/현재/다음, 항상 3장 고정 */
+  height:100%;
+  will-change:transform;
+}
+.gallery-slide{
+  position:relative;
+  flex:0 0 calc(100% / 3);
+  width:calc(100% / 3);
+  height:100%;
+}
+.gallery-photo{
+  position:absolute;
+  inset:6%;
+  width:88%;
+  height:88%;
+  object-fit:cover;
+  cursor:pointer;
+  border:3px solid var(--dark);
+  -webkit-user-drag:none;
+  user-select:none;
+}
+/* 액자 테두리 이미지 — images/gallery-frame.png 를 넣으면 사진 위에 자동으로 씌워집니다.
+   파일이 없으면 onerror로 자동 숨김 처리됩니다.
+   권장 규격: 정사각형 640x640px, 중앙에 약 500x500px 투명 구멍(테두리 두께 약 70px) */
+.gallery-frame{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  pointer-events:none;
+  -webkit-user-drag:none;
+  user-select:none;
+}
+.gallery-arrow{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:34px; height:34px;
+  border:3px solid var(--dark);
+  background:var(--yellow);
+  color:var(--ink);
+  font-size:12px;
+  cursor:pointer;
+  z-index:3;
+  box-shadow: inset -2px -2px 0 var(--yellow-deep), inset 2px 2px 0 #FFF6D0;
+  display:flex; align-items:center; justify-content:center;
+}
+.gallery-arrow.left{ left:-14px; }
+.gallery-arrow.right{ right:-14px; }
+.gallery-arrow:active{ transform:translateY(-50%) translateY(2px); }
+.gallery-dots{
+  display:flex;
+  justify-content:center;
+  gap:7px;
+  margin-top:18px;
+}
+.gallery-dots .dot{
+  width:9px; height:9px;
+  background:#fff;
+  border:2px solid var(--dark);
+  cursor:pointer;
+}
+.gallery-dots .dot.active{ background:var(--pink-deep); }
+
+/* ---------- LIGHTBOX ---------- */
+.lightbox-overlay{
+  position:fixed; inset:0;
+  background:rgba(255,255,255,0.88);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:300;
+  padding:30px;
+}
+.lightbox-overlay.open{ display:flex; }
+.lightbox-box{
+  max-width:92vw;
+  max-height:80vh;
+  padding:10px;
+}
+.lightbox-box img{
+  display:block;
+  max-width:100%;
+  max-height:calc(80vh - 20px);
+  object-fit:contain;
+}
+.lightbox-close{
+  position:absolute;
+  top:22px; right:22px;
+  width:34px; height:34px;
+  border:3px solid var(--dark);
+  background:#fff;
+  color:var(--dark);
+  font-weight:700;
+  cursor:pointer;
+  z-index:2;
+}
+
+/* ---------- DIALOGUE BOX ---------- */
+.dialogue{ display:flex; gap:14px; align-items:flex-start; }
+.dialogue svg{ width:56px; height:56px; flex-shrink:0; }
+.speech{
+  flex:1;
+  background:#fff;
+  border:3px solid var(--dark);
+  padding:14px 14px 16px;
+  position:relative;
+  font-size:13px;
+  line-height:1.85;
+}
+.speech::before{
+  content:'';
+  position:absolute; left:-9px; top:14px;
+  width:0; height:0;
+  border-top:7px solid transparent;
+  border-bottom:7px solid transparent;
+  border-right:9px solid var(--dark);
+}
+.speech .cursor{
+  display:block; text-align:right; color:var(--mid); font-size:10px; margin-top:6px;
+  animation:blink 1s steps(1) infinite;
+}
+.party-card{
+  margin-top:22px;
+  background:var(--cream-deep);
+  border:3px dashed var(--mid);
+  padding:14px;
+  text-align:center;
+  font-size:12.5px;
+  line-height:2;
+}
+.party-card b{ color:var(--pink-deep); }
+
+/* ---------- QUEST / CALENDAR ---------- */
+.cal-title{
+  text-align:center; font-size:11px; margin-bottom:16px; color:var(--mid);
+  font-family:'Press Start 2P',monospace;
+}
+.cal-grid{
+  display:grid; grid-template-columns:repeat(7,1fr); gap:5px;
+  text-align:center; font-size:11.5px;
+}
+.cal-grid .dow{ color:var(--mid); font-weight:700; padding-bottom:4px; font-size:10px;}
+.cal-grid .day{ color:var(--ink); padding:7px 0; position:relative; }
+.cal-grid .day.blank{ visibility:hidden; }
+.cal-grid .day.dday{ background:var(--pink); color:#fff; font-weight:700; }
+.cal-grid .day.dday svg{ position:absolute; top:-9px; right:-3px; width:14px; height:14px; }
+.quest-line{ text-align:center; margin-top:18px; font-size:12px; color:var(--mid); }
+
+/* ---------- MAP / CRT ---------- */
+.venue-name{ text-align:center; font-size:15px; margin-bottom:6px; font-weight:700; }
+.venue-addr{ text-align:center; font-size:12px; color:var(--mid); margin-bottom:14px; }
+.copy-row{ display:flex; justify-content:center; margin-bottom:18px; }
+.crt{
+  position:relative;
+  border:5px solid var(--dark);
+  background:#000;
+  padding:6px;
+  box-shadow: inset 0 0 0 2px #111;
+}
+.crt .screen{ position:relative; width:100%; height:210px; overflow:hidden; }
+.crt .screen iframe{ width:100%; height:100%; border:0; }
+.crt .scanlines{
+  position:absolute; inset:0; pointer-events:none;
+  background:repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0 2px, transparent 2px 4px);
+  mix-blend-mode:multiply;
+}
+.crt .screw{ position:absolute; width:6px; height:6px; background:#666; }
+.crt .screw.tl{ top:-3px; left:-3px; } .crt .screw.tr{ top:-3px; right:-3px; }
+.crt .screw.bl{ bottom:-3px; left:-3px; } .crt .screw.br{ bottom:-3px; right:-3px; }
+.map-links{ display:flex; gap:10px; margin-top:16px; }
+.map-links a{ flex:1; text-decoration:none; }
+
+/* ---------- ITEM SHOP / ACCOUNTS ---------- */
+.acc-tabs{ display:flex; gap:8px; margin-bottom:16px; }
+.acc-tab{
+  flex:1; text-align:center; padding:9px 0; font-size:12px; cursor:pointer;
+  border:3px solid var(--dark); background:#fff; color:var(--mid); font-weight:700;
+}
+.acc-tab.active{ background:var(--blue); color:#fff; }
+.acc-group{ display:none; }
+.acc-group.active{ display:block; }
+.item-slot{
+  background:#fff; border:3px solid var(--dark);
+  padding:12px 14px; margin-bottom:10px;
+  display:flex; align-items:center; gap:10px;
+  flex-wrap:wrap;
+}
+.item-slot svg{ width:30px; height:30px; flex-shrink:0; }
+.item-info{ flex:1; min-width:120px; }
+.item-info .who{ font-size:11px; color:var(--mid); margin-bottom:2px; }
+.item-info .num{ font-size:12px; font-weight:700; word-break:break-all; }
+.item-actions{ display:flex; gap:6px; flex-shrink:0; margin-left:auto; }
+.item-actions .pixel-btn{ text-decoration:none; display:inline-block; }
+.acc-note{ text-align:center; font-size:10.5px; color:var(--mid); margin-top:12px; line-height:1.8; }
+
+/* ---------- MESSAGE BOARD ---------- */
+.note-card{
+  background:#FFFDE9;
+  border:3px solid var(--dark);
+  border-top:10px solid var(--dark);
+  padding:12px 12px 14px;
+  margin-bottom:12px;
+  position:relative;
+}
+.note-card svg{ position:absolute; top:-19px; left:50%; transform:translateX(-50%); width:16px; height:22px; }
+.note-top{ display:flex; justify-content:space-between; margin-bottom:5px; }
+.note-name{ font-size:12.5px; font-weight:700; }
+.note-date{ font-size:10px; color:var(--mid); }
+.note-msg{ font-size:12.5px; line-height:1.6; color:var(--ink); }
+.gb-empty{ text-align:center; color:var(--mid); font-size:12.5px; padding:18px 0; }
+.gb-more{ display:block; width:100%; text-align:center; margin-top:6px; }
+
+/* ---------- MODAL ---------- */
+.modal-overlay{ position:fixed; inset:0; background:rgba(20,15,10,0.55); display:none; align-items:flex-end; justify-content:center; z-index:100; }
+.modal-overlay.open{ display:flex; }
+.modal-sheet{
+  width:100%; max-width:460px; background:var(--cream); border:4px solid var(--dark); border-bottom:none;
+  max-height:75vh; display:flex; flex-direction:column;
+  animation:slideup .25s ease;
+}
+@keyframes slideup{ from{ transform:translateY(24px); opacity:0;} to{ transform:translateY(0); opacity:1;} }
+.modal-head{ display:flex; justify-content:space-between; align-items:center; padding:14px 16px; background:var(--dark); }
+.modal-head h3{ font-size:12px; color:#fff; font-family:'Press Start 2P',monospace; }
+.modal-close{ background:#fff; border:2px solid var(--dark); width:22px; height:22px; color:var(--dark); cursor:pointer; font-weight:700; }
+.modal-body{ padding:16px; overflow-y:auto; }
+
+/* ---------- FLOWER DIVIDER ---------- */
+.flower-divider{
+  width:100%;
+  aspect-ratio: 460 / 234;
+  background-repeat:no-repeat;
+  background-size:cover;
+  background-position:center;
+}
+
+/* ---------- FOOTER ----------
+   기본값: 이미지 없이 은은한 크림색 배경.
+   커스텀 이미지를 쓰려면 background-image를 이 클래스에 추가하세요
+   (배경으로 쓸 경우에도 .footer-inner 카드가 텍스트 가독성을 잡아줍니다). */
+.footer{
+  position:relative;
+  width:100%;
+  padding:50px 20px;
+  background-repeat:no-repeat;
+  background-size:cover;
+  background-position:center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.footer-inner{
+  text-align:center;
+  background:rgba(255,255,255,0.78);
+  border:3px solid var(--dark);
+  padding:16px 22px;
+}
+.footer svg{ width:34px; height:34px; margin:0 auto 10px; display:block; }
+.footer .thanks{ font-size:13px; margin-bottom:8px; color:var(--ink); }
+.footer .small{ font-size:8px; color:var(--mid); letter-spacing:1px; line-height:1.6; }
+.share-row{ display:flex; gap:8px; justify-content:center; margin-top:16px; }
+
+.toast{
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+  background:var(--dark); color:#fff; padding:10px 18px; font-size:12px;
+  border:2px solid #000; opacity:0; pointer-events:none; transition:all .3s ease; z-index:200; white-space:nowrap;
+  font-family:'Galmuri11',sans-serif;
+}
+.toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+@media (prefers-reduced-motion: reduce){
+  .cloud-track, .ground-track, .press-start, .heart-fx svg, .speech .cursor{ animation:none !important; }
+  .petal-layer{ display:none; }
+}
