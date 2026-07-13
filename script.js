@@ -509,8 +509,8 @@ buildCalendar();
    localStorage에 저장하도록 동작해서, 설정 전에도 방명록 기능 자체는
    바로 테스트해볼 수 있습니다.
 ========================================================= */
-const GUESTBOOK_API_URL = 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
-const GUESTBOOK_SECRET = 'PASTE_YOUR_SECRET_HERE';
+const GUESTBOOK_API_URL = 'https://script.google.com/macros/s/AKfycbwhiaKBSUdI2yJaR8VT4AeasLyUFvkxEi378qrJm_BeEaBe3K_RHUIOjc-amCm6uxXB/exec';
+const GUESTBOOK_SECRET = 'shinbeom-hana-2026-wedding-240731';
 const GUESTBOOK_LOCAL_KEY = 'wedding-guestbook-pixel';
 
 function guestbookConfigured(){
