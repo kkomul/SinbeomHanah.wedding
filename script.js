@@ -497,31 +497,65 @@ function updateDday(){
 buildCalendar();
 
 /* =========================================================
-   저장 방식 안내 (중요)
+   방명록 저장 방식 — Google 스프레드시트 연동
    -----------------------------------------------------------
-   GitHub Pages는 정적 호스팅이라 서버/DB가 없습니다.
-   그래서 기본값은 브라우저의 localStorage를 사용합니다.
-   → 장점: 별도 설정 없이 바로 작동합니다.
-   → 단점: 내가 남긴 방명록/참석여부는 "내 브라우저"에만 저장되고,
-           다른 하객의 화면이나 신랑신부에게는 보이지 않습니다.
+   아래 두 값을 채우면 방명록이 구글 스프레드시트에 저장/조회됩니다.
+   (설정 방법은 GOOGLE_SHEETS_SETUP.md 참고)
+   - GUESTBOOK_API_URL : Apps Script를 "웹 앱"으로 배포하면 나오는 주소
+   - GUESTBOOK_SECRET  : Apps Script 코드 안에 적어둔 것과 똑같은 문자열
+                         (아무나 함부로 글을 써넣지 못하게 막는 간단한 암호입니다)
 
-   모든 하객의 응답을 한곳에 모으려면(추천) 아래 중 하나를 연결하세요.
-   - Google 스프레드시트 + Apps Script 웹앱 (무료, 코드 몇 줄)
-   - Firebase Firestore (무료 티어)
-   연결 시 이 두 함수(loadList/saveList) 내부만 fetch() 호출로
-   바꿔주면 나머지 코드는 그대로 사용할 수 있습니다.
+   두 값을 아직 채우지 않았다면(placeholder 상태) 자동으로 이 브라우저의
+   localStorage에 저장하도록 동작해서, 설정 전에도 방명록 기능 자체는
+   바로 테스트해볼 수 있습니다.
 ========================================================= */
-async function loadList(key){
+const GUESTBOOK_API_URL = 'https://script.google.com/macros/s/AKfycbwhiaKBSUdI2yJaR8VT4AeasLyUFvkxEi378qrJm_BeEaBe3K_RHUIOjc-amCm6uxXB/exec';
+const GUESTBOOK_SECRET = 'shinbeom-hana-2026-wedding-240731';
+const GUESTBOOK_LOCAL_KEY = 'wedding-guestbook-pixel';
+
+function guestbookConfigured(){
+  return GUESTBOOK_API_URL && GUESTBOOK_API_URL.indexOf('PASTE_') !== 0;
+}
+
+async function loadGuestbook(){
+  if(!guestbookConfigured()){
+    try{
+      const raw = localStorage.getItem(GUESTBOOK_LOCAL_KEY);
+      return raw ? JSON.parse(raw) : [];
+    }catch(e){
+      return [];
+    }
+  }
   try{
-    const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : [];
+    const res = await fetch(GUESTBOOK_API_URL);
+    if(!res.ok) throw new Error('network error');
+    return await res.json();
   }catch(e){
+    showToast('방명록을 불러오지 못했습니다');
     return [];
   }
 }
-async function saveList(key, arr){
+
+async function saveGuestbookEntry(entry){
+  if(!guestbookConfigured()){
+    try{
+      const raw = localStorage.getItem(GUESTBOOK_LOCAL_KEY);
+      const list = raw ? JSON.parse(raw) : [];
+      list.unshift(entry);
+      localStorage.setItem(GUESTBOOK_LOCAL_KEY, JSON.stringify(list));
+      return true;
+    }catch(e){
+      return false;
+    }
+  }
   try{
-    localStorage.setItem(key, JSON.stringify(arr));
+    /* 주의: Content-Type을 직접 지정하지 않아야 브라우저가 자동으로
+       text/plain으로 보내고, 그래야 Apps Script 쪽 CORS preflight 문제가
+       생기지 않습니다. (GOOGLE_SHEETS_SETUP.md 에 자세히 설명) */
+    await fetch(GUESTBOOK_API_URL, {
+      method: 'POST',
+      body: JSON.stringify({ ...entry, secret: GUESTBOOK_SECRET })
+    });
     return true;
   }catch(e){
     return false;
@@ -566,20 +600,19 @@ async function submitGuestbook(){
   }
   const btn = document.getElementById('gbSubmit');
   btn.disabled = true;
-  const list = await loadList('wedding-guestbook-pixel');
-  list.unshift({ name, message, createdAt: new Date().toISOString() });
-  const ok = await saveList('wedding-guestbook-pixel', list);
-  btn.disabled = false;
+  const ok = await saveGuestbookEntry({ name, message, createdAt: new Date().toISOString() });
   if(ok){
     nameEl.value=''; msgEl.value='';
+    const list = await loadGuestbook();
     renderGuestbookPreview(list);
     showToast('방명록 등록 완료 !');
   }else{
     showToast('등록에 실패했습니다. 다시 시도해 주세요');
   }
+  btn.disabled = false;
 }
 function openGuestbookModal(){
-  loadList('wedding-guestbook-pixel').then(list=>{
+  loadGuestbook().then(list=>{
     document.getElementById('gbFullList').innerHTML = list.map(entryHtml).join('') || '<div class="gb-empty">등록된 메시지가 없습니다</div>';
     document.getElementById('gbModal').classList.add('open');
   });
@@ -615,4 +648,4 @@ async function shareCopyLink(){
 }
 
 /* ---------- init ---------- */
-loadList('wedding-guestbook-pixel').then(renderGuestbookPreview);
+loadGuestbook().then(renderGuestbookPreview);
