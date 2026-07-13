@@ -700,18 +700,58 @@ function closeGuestbookModal(){
    기능(Web Share API)을 사용합니다 — 공유 시트에서 카카오톡을 포함해
    원하는 앱을 골라 보낼 수 있습니다. 미지원 브라우저(주로 PC)에서는
    링크를 자동으로 복사해 드립니다. */
+/* =========================================================
+   카카오톡 공유 — Kakao SDK
+   -----------------------------------------------------------
+   KAKAO_JS_KEY 를 채우면 진짜 카카오톡 공유 카드(썸네일+제목+버튼)가 뜹니다.
+   설정 방법은 KAKAO_SHARE_SETUP.md 참고.
+   아직 채우지 않았다면(placeholder 상태) 자동으로 기존처럼
+   모바일 기본 공유 기능(Web Share API) → 링크 복사 순서로 대체됩니다.
+========================================================= */
+const KAKAO_JS_KEY = '23ab99a5cfcb362b780e0cee91825956';
+
+function kakaoConfigured(){
+  return KAKAO_JS_KEY && KAKAO_JS_KEY.indexOf('PASTE_') !== 0 && typeof Kakao !== 'undefined';
+}
+if(kakaoConfigured() && !Kakao.isInitialized()){
+  Kakao.init(KAKAO_JS_KEY);
+}
+
 async function shareKakao(){
+  const pageUrl = window.location.href;
+
+  if(kakaoConfigured()){
+    try{
+      Kakao.Share.sendDefault({
+        objectType: 'feed',
+        content: {
+          title: '우신범 ♥ 김한아 결혼식에 초대합니다',
+          description: '2026.10.31(토) 오전 11:30 · 대구중앙컨벤션센터',
+          imageUrl: new URL('images/title-logo.png', pageUrl).href,
+          link: { mobileWebUrl: pageUrl, webUrl: pageUrl }
+        },
+        buttons: [
+          { title: '청첩장 보러가기', link: { mobileWebUrl: pageUrl, webUrl: pageUrl } }
+        ]
+      });
+      return;
+    }catch(e){
+      console.error('카카오톡 공유 실패:', e);
+      /* 실패 시 아래 대체 방식으로 계속 진행 */
+    }
+  }
+
   const shareData = {
     title: '우신범 ♥ 김한아 결혼식에 초대합니다',
     text: '10월 31일 토요일, 저희 두 사람의 새로운 시작에 함께해 주세요.',
-    url: window.location.href
+    url: pageUrl
   };
   if(navigator.share){
     try{
       await navigator.share(shareData);
     }catch(e){ /* 사용자가 공유를 취소한 경우 등 — 별도 처리 없음 */ }
   }else{
-    await copyText(window.location.href);
+    await copyText(pageUrl);
     showToast('링크가 복사되었습니다. 카카오톡에 붙여넣어 공유해 보세요');
   }
 }
