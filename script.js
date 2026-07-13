@@ -331,7 +331,7 @@ if(galleryViewport){
   galleryViewport.addEventListener('pointercancel', endGalleryDrag);
 }
 
-function openLightbox(){
+function renderLightboxImage(){
   const src = photoSrc(galleryIndex);
   const box = document.getElementById('lightboxImg');
   const pre = new Image();
@@ -340,6 +340,9 @@ function openLightbox(){
     box.style.backgroundImage = `url(${src})`;
   };
   pre.src = src;
+}
+function openLightbox(){
+  renderLightboxImage();
   document.getElementById('lightboxOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -349,6 +352,44 @@ function closeLightbox(){
 }
 function closeLightboxBg(e){
   if(e.target.id === 'lightboxOverlay') closeLightbox();
+}
+/* 확대 화면에서도 화살표/스와이프로 사진을 넘길 수 있게 합니다.
+   갤러리 캐러셀(뒤 배경)도 같은 사진으로 맞춰둬서, 확대 화면을 닫아도
+   보던 사진이 그대로 이어집니다. */
+function lightboxMove(dir){
+  galleryIndex = mod(galleryIndex + dir, GALLERY_COUNT);
+  renderSlots();
+  setTrack(REST_PCT, false);
+  updateGalleryDots();
+  renderLightboxImage();
+}
+
+let lbStartX = 0;
+let lbDeltaX = 0;
+let lbDragging = false;
+const lightboxBoxEl = document.getElementById('lightboxImg');
+if(lightboxBoxEl){
+  lightboxBoxEl.addEventListener('pointerdown', (e)=>{
+    lbDragging = true;
+    lbStartX = e.clientX;
+    lbDeltaX = 0;
+  });
+  lightboxBoxEl.addEventListener('pointermove', (e)=>{
+    if(!lbDragging) return;
+    lbDeltaX = e.clientX - lbStartX;
+  });
+  const endLbDrag = ()=>{
+    if(!lbDragging) return;
+    lbDragging = false;
+    if(lbDeltaX > 40){
+      lightboxMove(-1);
+    }else if(lbDeltaX < -40){
+      lightboxMove(1);
+    }
+    lbDeltaX = 0;
+  };
+  lightboxBoxEl.addEventListener('pointerup', endLbDrag);
+  lightboxBoxEl.addEventListener('pointercancel', endLbDrag);
 }
 
 /* =========================================================

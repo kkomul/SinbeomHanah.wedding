@@ -359,8 +359,8 @@ h2.sec-title{
   box-shadow: inset -2px -2px 0 var(--yellow-deep), inset 2px 2px 0 #FFF6D0;
   display:flex; align-items:center; justify-content:center;
 }
-.gallery-arrow.left{ left:-30px; }
-.gallery-arrow.right{ right:-30px; }
+.gallery-arrow.left{ left:-32px; }
+.gallery-arrow.right{ right:-32px; }
 .gallery-arrow:active{ transform:translateY(-50%) translateY(2px); }
 .gallery-dots{
   display:flex;
@@ -400,6 +400,8 @@ h2.sec-title{
   background-size:contain;
   background-position:center;
   background-repeat:no-repeat;
+  touch-action:none;
+  cursor:grab;
 }
 .lightbox-close{
   position:absolute;
@@ -412,6 +414,23 @@ h2.sec-title{
   cursor:pointer;
   z-index:2;
 }
+.lightbox-arrow{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:38px; height:38px;
+  border:3px solid var(--dark);
+  background:var(--yellow);
+  color:var(--ink);
+  font-size:13px;
+  cursor:pointer;
+  z-index:2;
+  box-shadow: inset -2px -2px 0 var(--yellow-deep), inset 2px 2px 0 #FFF6D0;
+  display:flex; align-items:center; justify-content:center;
+}
+.lightbox-arrow.left{ left:12px; }
+.lightbox-arrow.right{ right:12px; }
+.lightbox-arrow:active{ transform:translateY(-50%) translateY(2px); }
 
 /* ---------- DIALOGUE BOX ---------- */
 .dialogue{ display:flex; gap:14px; align-items:flex-start; }

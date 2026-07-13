@@ -267,6 +267,8 @@
 <!-- Gallery Lightbox -->
 <div class="lightbox-overlay" id="lightboxOverlay" onclick="closeLightboxBg(event)">
   <button class="lightbox-close" onclick="closeLightbox()" aria-label="닫기">X</button>
+  <button class="lightbox-arrow left" onclick="lightboxMove(-1)" aria-label="이전 사진">◀</button>
+  <button class="lightbox-arrow right" onclick="lightboxMove(1)" aria-label="다음 사진">▶</button>
   <div class="lightbox-box pixel-box">
     <div id="lightboxImg"></div>
   </div>
