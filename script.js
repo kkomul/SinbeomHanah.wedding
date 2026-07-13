@@ -570,10 +570,8 @@ async function saveGuestbookEntry(entry){
     });
 
     const list = await loadGuestbook();
-    const found = list.some(item =>
-      item.name === entry.name &&
-      item.message === entry.message &&
-      item.createdAt === entry.createdAt
+    const found = list.slice(0, 3).some(item =>
+      item.name === entry.name && item.message === entry.message
     );
     if(!found){
       console.error('방명록 저장 확인 실패 — 방금 등록한 글을 시트에서 찾지 못했습니다. 비밀문자열/시트 이름을 확인하세요.');
