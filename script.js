@@ -520,6 +520,12 @@ function guestbookConfigured(){
 function genId(){
   return Math.random().toString(36).slice(2, 10).toUpperCase();
 }
+/* new Date().toISOString()은 항상 UTC(런던 기준시)로 나와서 한국 시간과 9시간 차이가 납니다.
+   시트에 저장될 때 한국 시간(KST, UTC+9)으로 보이도록 시간을 9시간 밀어서 만듭니다.
+   (절대적인 시각 자체는 동일하고, 표기만 한국 시간 기준으로 바뀝니다) */
+function nowKST(){
+  return new Date(Date.now() + 9*60*60*1000).toISOString().replace('Z', '+09:00');
+}
 console.log(
   guestbookConfigured()
     ? '[방명록] 구글 스프레드시트 연동 사용 중 → ' + GUESTBOOK_API_URL
@@ -624,7 +630,7 @@ async function submitGuestbook(){
   }
   const btn = document.getElementById('gbSubmit');
   btn.disabled = true;
-  const list = await saveGuestbookEntry({ id: genId(), name, message, createdAt: new Date().toISOString() });
+  const list = await saveGuestbookEntry({ id: genId(), name, message, createdAt: nowKST() });
   if(list){
     nameEl.value=''; msgEl.value='';
     renderGuestbookPreview(list);
