@@ -533,9 +533,13 @@ async function loadGuestbook(){
   }
   try{
     const res = await fetch(GUESTBOOK_API_URL);
-    if(!res.ok) throw new Error('network error');
+    if(!res.ok){
+      console.error('방명록 불러오기 실패 — HTTP 상태:', res.status, res.statusText);
+      throw new Error('network error');
+    }
     return await res.json();
   }catch(e){
+    console.error('방명록 불러오기 중 오류:', e);
     showToast('방명록을 불러오지 못했습니다');
     return [];
   }
