@@ -509,13 +509,18 @@ buildCalendar();
    localStorage에 저장하도록 동작해서, 설정 전에도 방명록 기능 자체는
    바로 테스트해볼 수 있습니다.
 ========================================================= */
-const GUESTBOOK_API_URL = 'https://script.google.com/macros/s/AKfycbwhiaKBSUdI2yJaR8VT4AeasLyUFvkxEi378qrJm_BeEaBe3K_RHUIOjc-amCm6uxXB/exec';
-const GUESTBOOK_SECRET = 'shinbeom-hana-2026-wedding-240731';
+const GUESTBOOK_API_URL = 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
+const GUESTBOOK_SECRET = 'PASTE_YOUR_SECRET_HERE';
 const GUESTBOOK_LOCAL_KEY = 'wedding-guestbook-pixel';
 
 function guestbookConfigured(){
   return GUESTBOOK_API_URL && GUESTBOOK_API_URL.indexOf('PASTE_') !== 0;
 }
+console.log(
+  guestbookConfigured()
+    ? '[방명록] 구글 스프레드시트 연동 사용 중 → ' + GUESTBOOK_API_URL
+    : '[방명록] 아직 localStorage 사용 중 (GUESTBOOK_API_URL이 설정되지 않음)'
+);
 
 async function loadGuestbook(){
   if(!guestbookConfigured()){
@@ -552,12 +557,18 @@ async function saveGuestbookEntry(entry){
     /* 주의: Content-Type을 직접 지정하지 않아야 브라우저가 자동으로
        text/plain으로 보내고, 그래야 Apps Script 쪽 CORS preflight 문제가
        생기지 않습니다. (GOOGLE_SHEETS_SETUP.md 에 자세히 설명) */
-    await fetch(GUESTBOOK_API_URL, {
+    const res = await fetch(GUESTBOOK_API_URL, {
       method: 'POST',
       body: JSON.stringify({ ...entry, secret: GUESTBOOK_SECRET })
     });
+    const data = await res.json(); /* 실제로 응답을 읽어서 성공 여부를 확인합니다 */
+    if(!data || data.ok !== true){
+      console.error('방명록 저장 실패 — Apps Script 응답:', data);
+      return false;
+    }
     return true;
   }catch(e){
+    console.error('방명록 저장 중 오류:', e);
     return false;
   }
 }
