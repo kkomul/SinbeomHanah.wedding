@@ -122,9 +122,9 @@
 
       <div class="gallery-viewport" id="galleryViewport">
         <div class="gallery-track" id="galleryTrack">
-          <div class="gallery-slide"><img class="gallery-photo" id="slotPrev" src="" alt=""><img class="gallery-frame" src="images/gallery-frame.png" alt="" onerror="this.style.display='none'"></div>
-          <div class="gallery-slide"><img class="gallery-photo" id="slotCurr" src="" alt=""><img class="gallery-frame" src="images/gallery-frame.png" alt="" onerror="this.style.display='none'"></div>
-          <div class="gallery-slide"><img class="gallery-photo" id="slotNext" src="" alt=""><img class="gallery-frame" src="images/gallery-frame.png" alt="" onerror="this.style.display='none'"></div>
+          <div class="gallery-slide"><div class="gallery-photo" id="slotPrev"></div><img class="gallery-frame" src="images/gallery-frame.png" alt="" onerror="this.style.display='none'"></div>
+          <div class="gallery-slide"><div class="gallery-photo" id="slotCurr"></div><img class="gallery-frame" src="images/gallery-frame.png" alt="" onerror="this.style.display='none'"></div>
+          <div class="gallery-slide"><div class="gallery-photo" id="slotNext"></div><img class="gallery-frame" src="images/gallery-frame.png" alt="" onerror="this.style.display='none'"></div>
         </div>
       </div>
 
@@ -269,7 +269,7 @@
 <div class="lightbox-overlay" id="lightboxOverlay" onclick="closeLightboxBg(event)">
   <button class="lightbox-close" onclick="closeLightbox()" aria-label="닫기">X</button>
   <div class="lightbox-box pixel-box">
-    <img id="lightboxImg" src="" alt="">
+    <div id="lightboxImg"></div>
   </div>
 </div>
 

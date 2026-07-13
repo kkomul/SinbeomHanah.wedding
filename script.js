@@ -1,4 +1,26 @@
 /* =========================================================
+   복사 방지
+   -----------------------------------------------------------
+   완전히 막을 방법은 없습니다(브라우저 개발자도구, 화면 캡처 등은
+   기술적으로 항상 우회 가능합니다). 다만 대다수 하객이 시도할 만한
+   우클릭 저장, 이미지/텍스트 드래그 복사, 모바일 롱프레스 저장은
+   막아 둡니다.
+========================================================= */
+document.addEventListener('contextmenu', (e)=> e.preventDefault());
+document.addEventListener('dragstart', (e)=> e.preventDefault());
+document.addEventListener('selectstart', (e)=>{
+  const tag = e.target && e.target.tagName;
+  if(tag === 'INPUT' || tag === 'TEXTAREA') return; /* 방명록 입력창은 그대로 선택 가능하게 둠 */
+  e.preventDefault();
+});
+document.addEventListener('keydown', (e)=>{
+  const k = e.key ? e.key.toLowerCase() : '';
+  if(e.key === 'F12') { e.preventDefault(); return; }
+  if((e.ctrlKey || e.metaKey) && (k === 'u' || k === 's')) { e.preventDefault(); return; }
+  if((e.ctrlKey || e.metaKey) && e.shiftKey && (k === 'i' || k === 'j' || k === 'c')) { e.preventDefault(); }
+});
+
+/* =========================================================
    PIXEL ART ENGINE
    캐릭터/아이콘은 코드로 그려집니다 (이미지 파일 없음).
    실제 이미지 리소스(배경/구름/땅/타이틀로고/날짜리본)는
@@ -159,9 +181,9 @@ function photoSrc(i){ return `images/gallery/photo${i + 1}.jpg`; }
 
 function renderSlots(){
   if(!slotPrev) return;
-  slotPrev.src = photoSrc(mod(galleryIndex - 1, GALLERY_COUNT));
-  slotCurr.src = photoSrc(galleryIndex);
-  slotNext.src = photoSrc(mod(galleryIndex + 1, GALLERY_COUNT));
+  slotPrev.style.backgroundImage = `url(${photoSrc(mod(galleryIndex - 1, GALLERY_COUNT))})`;
+  slotCurr.style.backgroundImage = `url(${photoSrc(galleryIndex)})`;
+  slotNext.style.backgroundImage = `url(${photoSrc(mod(galleryIndex + 1, GALLERY_COUNT))})`;
 }
 
 function buildGalleryDots(){
@@ -310,7 +332,14 @@ if(galleryViewport){
 }
 
 function openLightbox(){
-  document.getElementById('lightboxImg').src = slotCurr.src;
+  const src = photoSrc(galleryIndex);
+  const box = document.getElementById('lightboxImg');
+  const pre = new Image();
+  pre.onload = ()=>{
+    box.style.aspectRatio = pre.naturalWidth + ' / ' + pre.naturalHeight;
+    box.style.backgroundImage = `url(${src})`;
+  };
+  pre.src = src;
   document.getElementById('lightboxOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
