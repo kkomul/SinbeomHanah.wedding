@@ -135,13 +135,16 @@ pixelIconAll('.ic-gift', GIFT_ROWS, GIFT_PAL);
 ========================================================= */
 const GALLERY_COUNT = 9;
 const REST_PCT = 100 / 3;      /* 트랙 안에서 "현재 사진"이 보이는 기준 위치 */
+const GALLERY_TAP_MAX_MOVE = 10;   /* 이보다 적게 움직였을 때만 "탭"으로 인정 (확대) */
+const GALLERY_SWIPE_MIN_DX = 10;   /* 이보다 많이 가로로 움직여야 "스와이프 시도"로 인정 */
+const GALLERY_DOMINANCE = 1.2;     /* 가로 이동이 세로 이동의 이 비율 이상이어야 가로로 판정 */
 let galleryIndex = 0;          /* 0 ~ 8, 지금 보고 있는 실제 사진 번호 */
 let galleryAnimating = false;  /* 애니메이션 도중 중복 입력 방지 */
 let galleryDragging = false;
 let galleryStartX = 0;
 let galleryStartY = 0;
 let galleryDeltaX = 0;
-let galleryWasDrag = false;
+let galleryDeltaY = 0;
 let galleryGesture = null; /* null(미결정) | 'horizontal'(캐러셀 조작) | 'vertical'(페이지 스크롤) */
 
 const galleryTrack = document.getElementById('galleryTrack');
@@ -236,51 +239,53 @@ if(galleryViewport){
   galleryViewport.addEventListener('pointerdown', (e)=>{
     if(galleryAnimating) return;
     galleryDragging = true;
-    galleryWasDrag = false;
     galleryGesture = null;
     galleryStartX = e.clientX;
     galleryStartY = e.clientY;
     galleryDeltaX = 0;
+    galleryDeltaY = 0;
     galleryTrack.style.transition = 'none';
     /* 아직 pointer capture는 잡지 않습니다 — 방향이 정해지기 전에 잡아버리면
-       세로 스크롤 도중에도 캐러셀이 반응하는 것처럼 보일 수 있습니다. */
+       세로 스크롤 도중에도 캐러셀이 반응하는 것처럼 보일 수 있습니다.
+       확대 여부도 여기서 바로 정하지 않고, 손을 뗄 때(pointerup)까지 기다립니다. */
   });
   galleryViewport.addEventListener('pointermove', (e)=>{
     if(!galleryDragging) return;
     galleryDeltaX = e.clientX - galleryStartX;
-    const deltaY = e.clientY - galleryStartY;
+    galleryDeltaY = e.clientY - galleryStartY;
+    const absX = Math.abs(galleryDeltaX);
+    const absY = Math.abs(galleryDeltaY);
 
     if(galleryGesture === null){
-      if(Math.abs(galleryDeltaX) > 6 || Math.abs(deltaY) > 6){
-        /* 움직인 방향이 확실해지는 시점에 한 번만 판정합니다 */
-        galleryGesture = Math.abs(galleryDeltaX) > Math.abs(deltaY) ? 'horizontal' : 'vertical';
-        if(galleryGesture === 'horizontal'){
-          galleryViewport.setPointerCapture(e.pointerId);
-        }
+      /* 가로 이동이 충분하고 세로보다 확실히 더 크면 → 캐러셀 스와이프로 확정 */
+      if(absX > GALLERY_SWIPE_MIN_DX && absX > absY * GALLERY_DOMINANCE){
+        galleryGesture = 'horizontal';
+        galleryViewport.setPointerCapture(e.pointerId);
+      /* 세로 이동이 가로보다 확실히 더 크면 → 페이지 스크롤로 확정 (느리게 움직여도 감지되도록 낮은 기준 사용) */
+      }else if(absY > GALLERY_TAP_MAX_MOVE && absY > absX * GALLERY_DOMINANCE){
+        galleryGesture = 'vertical';
       }
+      /* 그 외(아직 애매하게 조금만 움직인 상태)에는 계속 미결정으로 두고 다음 move에서 다시 판단 */
     }
 
     if(galleryGesture === 'horizontal'){
-      galleryWasDrag = true;
       galleryTrack.style.transform = `translateX(calc(-${REST_PCT}% + ${galleryDeltaX}px))`;
     }
-    /* 'vertical'로 판정되면 아무것도 하지 않습니다 — 캐러셀은 그대로 두고
-       페이지가 원래 하던 대로 자연스럽게 스크롤되게 둡니다. */
+    /* 'vertical' 이거나 아직 미결정인 동안은 캐러셀을 건드리지 않고 그대로 둡니다
+       (미결정 상태에서 페이지가 스크롤되고 있다면 자연스럽게 스크롤되도록 방해하지 않음). */
   });
   function endGalleryDrag(e){
     if(!galleryDragging) return;
     galleryDragging = false;
 
-    /* 브라우저가 세로 스크롤로 판단해 제스처를 가져간 경우(pointercancel)이거나
-       우리가 이미 세로 스크롤로 판정한 경우 → 캐러셀은 그대로 두고 조용히 종료 */
-    if(galleryGesture === 'vertical' || (e && e.type === 'pointercancel')){
+    /* 브라우저가 세로 스크롤로 판단해 제스처를 가져간 경우(pointercancel) → 조용히 종료 */
+    if(e && e.type === 'pointercancel'){
       galleryGesture = null;
-      galleryDeltaX = 0;
       return;
     }
 
-    const threshold = galleryViewport.offsetWidth * 0.18;
-    if(galleryWasDrag){
+    if(galleryGesture === 'horizontal'){
+      const threshold = galleryViewport.offsetWidth * 0.18;
       if(galleryDeltaX > threshold){
         commitMove(-1);
       }else if(galleryDeltaX < -threshold){
@@ -288,20 +293,23 @@ if(galleryViewport){
       }else{
         setTrack(REST_PCT, true);
       }
+    }else if(galleryGesture === 'vertical'){
+      /* 페이지를 스크롤하려던 제스처 → 확대하지 않고 조용히 종료 */
     }else{
-      /* 방향 판정이 나기 전에 손을 뗀, 움직임이 거의 없는 짧은 탭 → 확대 */
-      setTrack(REST_PCT, true);
-      openLightbox();
+      /* 방향이 끝까지 확정되지 않은 경우 — 처음 누른 지점과 뗀 지점이
+         실제로 거의 같은 자리일 때만(정확한 클릭/탭) 확대합니다. */
+      const dist = Math.hypot(galleryDeltaX, galleryDeltaY);
+      if(dist <= GALLERY_TAP_MAX_MOVE){
+        openLightbox();
+      }
     }
     galleryGesture = null;
-    galleryDeltaX = 0;
   }
   galleryViewport.addEventListener('pointerup', endGalleryDrag);
   galleryViewport.addEventListener('pointercancel', endGalleryDrag);
 }
 
 function openLightbox(){
-  if(galleryWasDrag) return; /* 드래그 끝에 클릭이 딸려오는 것 방지 */
   document.getElementById('lightboxImg').src = slotCurr.src;
   document.getElementById('lightboxOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
