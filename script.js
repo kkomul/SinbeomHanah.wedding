@@ -516,6 +516,10 @@ const GUESTBOOK_LOCAL_KEY = 'wedding-guestbook-pixel';
 function guestbookConfigured(){
   return GUESTBOOK_API_URL && GUESTBOOK_API_URL.indexOf('PASTE_') !== 0;
 }
+/* 방명록 저장 확인용 고유 ID (예: "K3F8QZ1P") — 이름/메시지 비교보다 훨씬 정확합니다 */
+function genId(){
+  return Math.random().toString(36).slice(2, 10).toUpperCase();
+}
 console.log(
   guestbookConfigured()
     ? '[방명록] 구글 스프레드시트 연동 사용 중 → ' + GUESTBOOK_API_URL
@@ -570,11 +574,9 @@ async function saveGuestbookEntry(entry){
     });
 
     const list = await loadGuestbook();
-    const found = list.slice(0, 3).some(item =>
-      item.name === entry.name && item.message === entry.message
-    );
+    const found = list.some(item => item.id && item.id === entry.id);
     if(!found){
-      console.error('방명록 저장 확인 실패 — 방금 등록한 글을 시트에서 찾지 못했습니다. 비밀문자열/시트 이름을 확인하세요.');
+      console.error('방명록 저장 확인 실패 — 방금 등록한 글(id: '+entry.id+')을 시트에서 찾지 못했습니다. 비밀문자열/시트 이름을 확인하세요.');
       return null;
     }
     return list;
@@ -622,7 +624,7 @@ async function submitGuestbook(){
   }
   const btn = document.getElementById('gbSubmit');
   btn.disabled = true;
-  const list = await saveGuestbookEntry({ name, message, createdAt: new Date().toISOString() });
+  const list = await saveGuestbookEntry({ id: genId(), name, message, createdAt: new Date().toISOString() });
   if(list){
     nameEl.value=''; msgEl.value='';
     renderGuestbookPreview(list);
