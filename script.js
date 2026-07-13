@@ -548,28 +548,37 @@ async function saveGuestbookEntry(entry){
       const list = raw ? JSON.parse(raw) : [];
       list.unshift(entry);
       localStorage.setItem(GUESTBOOK_LOCAL_KEY, JSON.stringify(list));
-      return true;
+      return list;
     }catch(e){
-      return false;
+      return null;
     }
   }
   try{
-    /* 주의: Content-Type을 직접 지정하지 않아야 브라우저가 자동으로
-       text/plain으로 보내고, 그래야 Apps Script 쪽 CORS preflight 문제가
-       생기지 않습니다. (GOOGLE_SHEETS_SETUP.md 에 자세히 설명) */
-    const res = await fetch(GUESTBOOK_API_URL, {
+    /* Apps Script의 POST 응답은 내부적으로 리다이렉트를 거치기 때문에,
+       일반 fetch로는 브라우저가 CORS 에러로 응답을 막아버리는 경우가 많습니다.
+       no-cors 모드로 보내면 요청/데이터는 정상적으로 서버에 전달되지만,
+       응답 내용은 읽을 수 없습니다(opaque response). 그래서 성공 여부는
+       "저장 직후 목록을 다시 불러와서 방금 쓴 글이 실제로 있는지"로 확인합니다. */
+    await fetch(GUESTBOOK_API_URL, {
       method: 'POST',
+      mode: 'no-cors',
       body: JSON.stringify({ ...entry, secret: GUESTBOOK_SECRET })
     });
-    const data = await res.json(); /* 실제로 응답을 읽어서 성공 여부를 확인합니다 */
-    if(!data || data.ok !== true){
-      console.error('방명록 저장 실패 — Apps Script 응답:', data);
-      return false;
+
+    const list = await loadGuestbook();
+    const found = list.some(item =>
+      item.name === entry.name &&
+      item.message === entry.message &&
+      item.createdAt === entry.createdAt
+    );
+    if(!found){
+      console.error('방명록 저장 확인 실패 — 방금 등록한 글을 시트에서 찾지 못했습니다. 비밀문자열/시트 이름을 확인하세요.');
+      return null;
     }
-    return true;
+    return list;
   }catch(e){
     console.error('방명록 저장 중 오류:', e);
-    return false;
+    return null;
   }
 }
 
@@ -611,10 +620,9 @@ async function submitGuestbook(){
   }
   const btn = document.getElementById('gbSubmit');
   btn.disabled = true;
-  const ok = await saveGuestbookEntry({ name, message, createdAt: new Date().toISOString() });
-  if(ok){
+  const list = await saveGuestbookEntry({ name, message, createdAt: new Date().toISOString() });
+  if(list){
     nameEl.value=''; msgEl.value='';
-    const list = await loadGuestbook();
     renderGuestbookPreview(list);
     showToast('방명록 등록 완료 !');
   }else{
