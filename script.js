@@ -488,10 +488,12 @@ function updateDday(){
   const now = new Date();
   const diff = Math.ceil((target - now) / (1000*60*60*24));
   const el = document.getElementById('ddayCount');
-  if(diff >= 0){
+  if(diff > 0){
     el.innerHTML = '신랑♥신부의 결혼식이 <b>'+diff+'일</b> 남았습니다';
+  }else if(diff === 0){
+    el.innerHTML = '신랑♥신부의 결혼식이 <b>오늘</b>입니다 !';
   }else{
-    el.innerHTML = '<b>결혼식이 마무리되었습니다</b>';
+    el.innerHTML = '신랑♥신부의 결혼식이 <b>'+Math.abs(diff)+'일</b> 지났습니다';
   }
 }
 buildCalendar();

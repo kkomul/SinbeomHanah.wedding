@@ -359,8 +359,8 @@ h2.sec-title{
   box-shadow: inset -2px -2px 0 var(--yellow-deep), inset 2px 2px 0 #FFF6D0;
   display:flex; align-items:center; justify-content:center;
 }
-.gallery-arrow.left{ left:-14px; }
-.gallery-arrow.right{ right:-14px; }
+.gallery-arrow.left{ left:-30px; }
+.gallery-arrow.right{ right:-30px; }
 .gallery-arrow:active{ transform:translateY(-50%) translateY(2px); }
 .gallery-dots{
   display:flex;
