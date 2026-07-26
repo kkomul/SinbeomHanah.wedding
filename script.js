@@ -110,7 +110,6 @@ const STAR_ROWS = [
 ];
 const STAR_PAL = { '1':'#FFD35C' };
 
-pixelIcon('iconHeart1', HEART_ROWS, HEART_PAL);
 pixelIcon('iconHeart2', HEART_ROWS, HEART_PAL);
 pixelIconAll('.ic-coin', COIN_ROWS, COIN_PAL);
 pixelIconAll('.ic-gift', GIFT_ROWS, GIFT_PAL);

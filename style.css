@@ -263,7 +263,7 @@ h2.sec-title{
 .sprite-row{
   position:absolute;
   z-index:2;
-  top:58%;
+  bottom:30%; /* 땅(ground-layer) 윗면 높이에 맞춰 발이 땅 위에 서도록 고정 */
   left:50%;
   transform:translateX(-50%);
   display:flex;
@@ -303,20 +303,18 @@ h2.sec-title{
   animation-duration:.5s;
   margin-bottom:6px;
 }
-.spr-groom-small{
-  --frames:4;
-  --fw:32px;
-  width:32px; height:42px; /* groom.png 프레임의 원본 가로:세로 비율에 맞춘 크기 */
-  background-image:url('images/sprites/groom.png');
-  background-repeat:no-repeat;
-  background-size:calc(var(--frames) * 100%) 100%;
-  background-position-x:0; /* 항상 1번째 프레임 고정 (애니메이션 없음) */
+.story-avatar{
+  width:40px; height:40px;
+  background-image:url('images/sprites/story-avatar.png');
+  background-size:cover;
+  background-position:center;
   image-rendering:pixelated;
   image-rendering:crisp-edges;
   border:3px solid var(--dark);
-  background-color:#fff;
   flex-shrink:0;
-  /* 위 히어로의 걷는 캐릭터와 달리, 움직이지 않는 정지된 프로필 아이콘입니다 */
+  /* 이 대화창 아이콘은 위 히어로의 걷는 캐릭터와 완전히 별개의 이미지입니다.
+     images/sprites/story-avatar.png 파일만 바꾸면 원하는 아이콘으로 교체됩니다
+     (정사각형 이미지 권장, 애니메이션 없는 정지 이미지입니다). */
 }
 /* 퍼센트 대신 실제 픽셀(px) 단위로 위치를 옮겨야 프레임 사이가 잘리지 않고
    깔끔하게 전환됩니다 (퍼센트 방식은 프레임 경계에서 옆 프레임이 살짝 겹쳐 보이는
@@ -325,7 +323,6 @@ h2.sec-title{
   from{ background-position-x:0; }
   to{ background-position-x:calc(var(--fw) * -4); } /* --frames 값과 맞춰주세요 (4프레임 → -4) */
 }
-.heart-fx svg{ width:26px; height:26px; animation:bounce 1.4s ease-in-out infinite; }
 @keyframes bounce{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-8px);} }
 
 /* 날짜 리본 이미지 */
@@ -658,6 +655,6 @@ h2.sec-title{
 .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
 
 @media (prefers-reduced-motion: reduce){
-  .cloud-track, .ground-track, .press-start, .heart-fx svg, .speech .cursor{ animation:none !important; }
+  .cloud-track, .ground-track, .press-start, .speech .cursor{ animation:none !important; }
   .petal-layer{ display:none; }
 }
