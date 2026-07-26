@@ -274,41 +274,49 @@ h2.sec-title{
 .sprite{
   --frames:4;
   background-repeat:no-repeat;
-  background-size:400% 100%; /* --frames * 100% */
+  background-size:calc(var(--frames) * 100%) 100%;
   animation-timing-function:steps(4); /* --frames 와 맞춰주세요 */
   animation-iteration-count:infinite;
   flex-shrink:0;
 }
 .spr-groom{
   width:56px; height:74px;
+  --fw:56px; /* width 값과 반드시 동일해야 합니다 */
   background-image:url('images/sprites/groom.png');
   animation-name:spriteWalk;
   animation-duration:.8s;
 }
 .spr-bride{
   width:56px; height:74px;
+  --fw:56px;
   background-image:url('images/sprites/bride.png');
   animation-name:spriteWalk;
   animation-duration:.8s;
 }
 .spr-cat{
   width:40px; height:29px;
+  --fw:40px;
   background-image:url('images/sprites/cat.png');
   animation-name:spriteWalk;
   animation-duration:.5s;
   margin-bottom:4px;
 }
 .spr-groom-small{
+  --frames:4;
   width:44px; height:58px;
+  --fw:44px;
   background-image:url('images/sprites/groom.png');
   background-repeat:no-repeat;
-  background-size:400% 100%;
+  background-size:calc(var(--frames) * 100%) 100%;
   animation:spriteWalk .8s steps(4) infinite;
   flex-shrink:0;
 }
+/* 퍼센트 대신 실제 픽셀(px) 단위로 위치를 옮겨야 프레임 사이가 잘리지 않고
+   깔끔하게 전환됩니다 (퍼센트 방식은 프레임 경계에서 옆 프레임이 살짝 겹쳐 보이는
+   문제가 있습니다). --fw 는 각 스프라이트의 width 값과 항상 같아야 합니다. */
 @keyframes spriteWalk{
-  from{ background-position:0% 0; }
-  to{ background-position:100% 0; }
+  from{ background-position-x:0; }
+  to{ background-position-x:calc(var(--fw) * -4); } /* --frames 값과 맞춰주세요 (4프레임 → -4) */
 }
 .heart-fx svg{ width:26px; height:26px; animation:bounce 1.4s ease-in-out infinite; }
 @keyframes bounce{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-8px);} }
