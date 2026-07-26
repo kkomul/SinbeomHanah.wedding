@@ -52,34 +52,6 @@ function pixelIconAll(selector, rows, palette){
   });
 }
 
-const GROOM_ROWS = [
-  ".HHHHHHHH.",
-  "HHHHHHHHHH",
-  "HHFFFFFFHH",
-  "HFFFFFFFFH",
-  "HFFEFFEFFH",
-  "HFFFFFFFFH",
-  ".FFFFFFFF.",
-  "..CCCCCC..",
-  ".CCWWWWCC.",
-  "CCCCCCCCCC"
-];
-const GROOM_PAL = { H:'#4A3222', F:'#FFD9B0', E:'#2B2B2B', C:'#3B5BA5', W:'#FFFFFF' };
-
-const BRIDE_ROWS = [
-  ".RRHHHHRR.",
-  "HHHHHHHHHH",
-  "HHFFFFFFHH",
-  "HFFFFFFFFH",
-  "HFFEFFEFFH",
-  "HFFFFFFFFH",
-  ".FFFFFFFF.",
-  "..DDDDDD..",
-  ".DDRRRRDD.",
-  "DDDDDDDDDD"
-];
-const BRIDE_PAL = { H:'#3B2A22', F:'#FFD9B0', E:'#2B2B2B', D:'#FFFFFF', R:'#FF9EC4' };
-
 const HEART_ROWS = [
   ".11.11.",
   "1111111",
@@ -138,9 +110,6 @@ const STAR_ROWS = [
 ];
 const STAR_PAL = { '1':'#FFD35C' };
 
-pixelIcon('sprGroom', GROOM_ROWS, GROOM_PAL);
-pixelIcon('sprGroom2', GROOM_ROWS, GROOM_PAL);
-pixelIcon('sprBride', BRIDE_ROWS, BRIDE_PAL);
 pixelIcon('iconHeart1', HEART_ROWS, HEART_PAL);
 pixelIcon('iconHeart2', HEART_ROWS, HEART_PAL);
 pixelIconAll('.ic-coin', COIN_ROWS, COIN_PAL);
@@ -525,9 +494,12 @@ function buildCalendar(){
   updateDday();
 }
 function updateDday(){
-  const target = new Date(2026,9,31,11,30,0);
+  /* 예식 시각(11:30)이 아니라 "날짜" 자체를 기준으로 비교합니다.
+     그래서 10.31 00:00(자정)이 되는 순간 바로 "오늘"로 바뀝니다. */
+  const targetMidnight = new Date(2026, 9, 31);
   const now = new Date();
-  const diff = Math.ceil((target - now) / (1000*60*60*24));
+  const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const diff = Math.round((targetMidnight - todayMidnight) / (1000*60*60*24));
   const el = document.getElementById('ddayCount');
   if(diff > 0){
     el.innerHTML = '신랑♥신부의 결혼식이 <b>'+diff+'일</b> 남았습니다';
@@ -708,7 +680,7 @@ function closeGuestbookModal(){
    아직 채우지 않았다면(placeholder 상태) 자동으로 기존처럼
    모바일 기본 공유 기능(Web Share API) → 링크 복사 순서로 대체됩니다.
 ========================================================= */
-const KAKAO_JS_KEY = '23ab99a5cfcb362b780e0cee91825956';
+const KAKAO_JS_KEY = 'PASTE_YOUR_KAKAO_JAVASCRIPT_KEY_HERE';
 
 function kakaoConfigured(){
   return KAKAO_JS_KEY && KAKAO_JS_KEY.indexOf('PASTE_') !== 0 && typeof Kakao !== 'undefined';

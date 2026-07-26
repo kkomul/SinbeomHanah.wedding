@@ -46,15 +46,14 @@
     <!-- 타이틀 로고 이미지 -->
     <img src="images/title-logo.png" class="title-logo-img" alt="우신범 한아 결혼식">
 
-    <!-- 캐릭터 (기존 도트 캐릭터 유지 - 별도 이미지 파일 없음) -->
+    <!-- 캐릭터 (스프라이트 시트 이미지, 4프레임 걷기 애니메이션)
+         이미지 교체: images/sprites/groom.png / bride.png / cat.png
+         각 파일은 가로로 4프레임이 나란히 이어진 한 장의 이미지여야 합니다. -->
     <div class="sprite-row">
-      <div class="sprite-wrap">
-        <svg id="sprGroom" viewBox="0 0 10 10"></svg>
-      </div>
+      <div class="sprite spr-cat"></div>
+      <div class="sprite spr-groom"></div>
       <div class="heart-fx"><svg id="iconHeart1" viewBox="0 0 7 6"></svg></div>
-      <div class="sprite-wrap">
-        <svg id="sprBride" viewBox="0 0 10 10"></svg>
-      </div>
+      <div class="sprite spr-bride"></div>
     </div>
 
     <!-- 3) 땅 레이어 (좌→우 무한 스크롤, 구름보다 빠르게) -->
@@ -75,7 +74,7 @@
   <section class="section fade-up">
     <div class="eyebrow">STORY</div>
     <div class="dialogue">
-      <svg id="sprGroom2" viewBox="0 0 10 10"></svg>
+      <div class="sprite spr-groom-small"></div>
       <div class="speech">
         어느 날, 서로 다른 길을 걷던 두 사람이 같은 세계에서 만나 친구가 되고,<br>
         가장 믿음직한 파티원이 되었습니다.<br><br>

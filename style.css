@@ -254,7 +254,12 @@ h2.sec-title{
   max-width:280px;
 }
 
-/* 캐릭터 스프라이트 (기존 도트 캐릭터 - 코드로 그려짐) */
+/* 캐릭터 스프라이트 (이미지 스프라이트 시트, 4프레임 걷기 애니메이션)
+   -----------------------------------------------------------
+   이미지 교체: images/sprites/groom.png / bride.png / cat.png
+   각 파일은 가로로 4프레임이 나란히 이어진 한 장의 이미지여야 합니다.
+   프레임 개수가 다르면 --frames 값과 background-size의 %를 함께 바꿔주세요
+   (예: 6프레임이면 --frames:6; background-size:600% 100%;) */
 .sprite-row{
   position:absolute;
   z-index:2;
@@ -264,9 +269,47 @@ h2.sec-title{
   display:flex;
   align-items:flex-end;
   justify-content:center;
-  gap:16px;
+  gap:10px;
 }
-.sprite-wrap svg{ width:58px; height:58px; }
+.sprite{
+  --frames:4;
+  background-repeat:no-repeat;
+  background-size:400% 100%; /* --frames * 100% */
+  animation-timing-function:steps(4); /* --frames 와 맞춰주세요 */
+  animation-iteration-count:infinite;
+  flex-shrink:0;
+}
+.spr-groom{
+  width:56px; height:74px;
+  background-image:url('images/sprites/groom.png');
+  animation-name:spriteWalk;
+  animation-duration:.8s;
+}
+.spr-bride{
+  width:56px; height:74px;
+  background-image:url('images/sprites/bride.png');
+  animation-name:spriteWalk;
+  animation-duration:.8s;
+}
+.spr-cat{
+  width:40px; height:29px;
+  background-image:url('images/sprites/cat.png');
+  animation-name:spriteWalk;
+  animation-duration:.5s;
+  margin-bottom:4px;
+}
+.spr-groom-small{
+  width:44px; height:58px;
+  background-image:url('images/sprites/groom.png');
+  background-repeat:no-repeat;
+  background-size:400% 100%;
+  animation:spriteWalk .8s steps(4) infinite;
+  flex-shrink:0;
+}
+@keyframes spriteWalk{
+  from{ background-position:0% 0; }
+  to{ background-position:100% 0; }
+}
 .heart-fx svg{ width:26px; height:26px; animation:bounce 1.4s ease-in-out infinite; }
 @keyframes bounce{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-8px);} }
 
@@ -359,8 +402,8 @@ h2.sec-title{
   box-shadow: inset -2px -2px 0 var(--yellow-deep), inset 2px 2px 0 #FFF6D0;
   display:flex; align-items:center; justify-content:center;
 }
-.gallery-arrow.left{ left:-20px; }
-.gallery-arrow.right{ right:-20px; }
+.gallery-arrow.left{ left:-42px; }
+.gallery-arrow.right{ right:-42px; }
 .gallery-arrow:active{ transform:translateY(-50%) translateY(2px); }
 .gallery-dots{
   display:flex;
