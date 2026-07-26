@@ -247,7 +247,7 @@ h2.sec-title{
 .title-logo-img{
   position:absolute;
   z-index:2;
-  top:7%;
+  top:10%;
   left:50%;
   transform:translateX(-50%);
   width:68%;
@@ -277,39 +277,46 @@ h2.sec-title{
   background-size:calc(var(--frames) * 100%) 100%;
   animation-timing-function:steps(4); /* --frames 와 맞춰주세요 */
   animation-iteration-count:infinite;
+  image-rendering:pixelated;
+  image-rendering:crisp-edges;
   flex-shrink:0;
 }
 .spr-groom{
-  width:56px; height:74px;
-  --fw:56px; /* width 값과 반드시 동일해야 합니다 */
+  width:110px; height:145px;
+  --fw:110px; /* width 값과 반드시 동일해야 합니다 */
   background-image:url('images/sprites/groom.png');
   animation-name:spriteWalk;
   animation-duration:.8s;
 }
 .spr-bride{
-  width:56px; height:74px;
-  --fw:56px;
+  width:110px; height:145px;
+  --fw:110px;
   background-image:url('images/sprites/bride.png');
   animation-name:spriteWalk;
   animation-duration:.8s;
 }
 .spr-cat{
-  width:40px; height:29px;
-  --fw:40px;
+  width:75px; height:55px;
+  --fw:75px;
   background-image:url('images/sprites/cat.png');
   animation-name:spriteWalk;
   animation-duration:.5s;
-  margin-bottom:4px;
+  margin-bottom:6px;
 }
 .spr-groom-small{
   --frames:4;
-  width:44px; height:58px;
-  --fw:44px;
+  --fw:32px;
+  width:32px; height:42px; /* groom.png 프레임의 원본 가로:세로 비율에 맞춘 크기 */
   background-image:url('images/sprites/groom.png');
   background-repeat:no-repeat;
   background-size:calc(var(--frames) * 100%) 100%;
-  animation:spriteWalk .8s steps(4) infinite;
+  background-position-x:0; /* 항상 1번째 프레임 고정 (애니메이션 없음) */
+  image-rendering:pixelated;
+  image-rendering:crisp-edges;
+  border:3px solid var(--dark);
+  background-color:#fff;
   flex-shrink:0;
+  /* 위 히어로의 걷는 캐릭터와 달리, 움직이지 않는 정지된 프로필 아이콘입니다 */
 }
 /* 퍼센트 대신 실제 픽셀(px) 단위로 위치를 옮겨야 프레임 사이가 잘리지 않고
    깔끔하게 전환됩니다 (퍼센트 방식은 프레임 경계에서 옆 프레임이 살짝 겹쳐 보이는
@@ -325,7 +332,7 @@ h2.sec-title{
 .date-ribbon-img{
   position:absolute;
   z-index:2;
-  top:85%;
+  top:32%;
   left:50%;
   transform:translateX(-50%);
   width:70%;
