@@ -489,7 +489,7 @@ h2.sec-title{
 .lightbox-arrow:active{ transform:translateY(-50%) translateY(2px); }
 
 /* ---------- DIALOGUE BOX ---------- */
-.dialogue{ display:flex; gap:14px; align-items:flex-start; margin-bottom:14px; }
+.dialogue{ display:flex; gap:14px; align-items:flex-start; margin-bottom:4px; }
 .dialogue.reverse{ margin-bottom:0; }
 .dialogue svg{ width:56px; height:56px; flex-shrink:0; }
 .speech{
@@ -524,20 +524,13 @@ h2.sec-title{
 .dialogue-deco{
   display:flex;
   flex-direction:column;
-  gap:8px;
+  gap:4px;
   padding:2px 0 2px 6px;
-  margin-bottom:14px;
+  margin-bottom:4px;
 }
 .dialogue-deco svg{ width:18px; height:16px; }
 .dialogue-deco svg:first-child{ transform:rotate(-12deg); }
 .dialogue-deco svg:last-child{ transform:rotate(14deg); margin-left:6px; }
-/* 두 번째 대화 박스 끝의 화살표 — 다음 섹션으로 이어지는 느낌 */
-.dialogue-arrow{
-  align-self:center;
-  color:var(--dark);
-  font-size:16px;
-  flex-shrink:0;
-}
 .party-card{
   margin-top:22px;
   background:var(--cream-deep);
