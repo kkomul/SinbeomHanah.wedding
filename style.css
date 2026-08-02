@@ -309,7 +309,6 @@ h2.sec-title{
   background-position:center;
   image-rendering:pixelated;
   image-rendering:crisp-edges;
-  border:3px solid var(--dark);
   flex-shrink:0;
   /* 이 대화창 아이콘들은 위 히어로의 걷는 캐릭터와 완전히 별개의 이미지입니다.
      정지 이미지이며, 아래 두 파일만 바꾸면 원하는 아이콘으로 교체됩니다
