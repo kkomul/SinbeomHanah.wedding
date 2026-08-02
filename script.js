@@ -111,6 +111,8 @@ const STAR_ROWS = [
 const STAR_PAL = { '1':'#FFD35C' };
 
 pixelIcon('iconHeart2', HEART_ROWS, HEART_PAL);
+pixelIcon('storyDecoHeart', HEART_ROWS, HEART_PAL);
+pixelIcon('storyDecoStar', STAR_ROWS, STAR_PAL);
 pixelIconAll('.ic-coin', COIN_ROWS, COIN_PAL);
 pixelIconAll('.ic-gift', GIFT_ROWS, GIFT_PAL);
 
@@ -446,15 +448,6 @@ async function copyText(text, btn){
 
 /* 카카오페이 개인 송금 링크가 아직 등록되지 않았으면(플레이스홀더 상태) 이동을 막고 안내합니다.
    실제 링크를 넣으면(href가 "여기에_"로 시작하지 않으면) 정상적으로 새 탭에서 열립니다. */
-function checkKakaoLink(el){
-  const href = el.getAttribute('href') || '';
-  if(!href || href.indexOf('여기에_') === 0){
-    showToast('카카오페이 송금 링크를 먼저 등록해 주세요');
-    return false;
-  }
-  return true;
-}
-
 /* ---------- tabs ---------- */
 function switchTab(name){
   document.querySelectorAll('.acc-tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===name));

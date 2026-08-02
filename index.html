@@ -73,18 +73,30 @@
   <section class="section fade-up">
     <div class="eyebrow">STORY</div>
     <div class="dialogue">
-      <div class="story-avatar"></div>
+      <div class="story-avatar story-avatar1"></div>
       <div class="speech">
         어느 날, 서로 다른 길을 걷던 두 사람이 같은 세계에서 만나 친구가 되고,<br>
         가장 믿음직한 파티원이 되었습니다.<br><br>
         함께 걷는 시간은 예상보다 훨씬 즐겁고 따뜻했으며,<br>
-        덕분에 어떤 난관도 웃으며 지나올 수 있었습니다.<br><br>
+        덕분에 어떤 난관도 웃으며 지나올 수 있었습니다.
+      </div>
+    </div>
+
+    <div class="dialogue-deco">
+      <svg id="storyDecoHeart" viewBox="0 0 7 6"></svg>
+      <svg id="storyDecoStar" viewBox="0 0 7 7"></svg>
+    </div>
+
+    <div class="dialogue reverse">
+      <div class="speech tail-right">
         이제 저희는 <b>새로운 스토리</b>를 시작하려 합니다.<br>
         가장 설레는 첫 장면에 소중한 여러분을 모시고 싶습니다.<br><br>
         함께해 주셔서 저희의 새로운 모험을 따뜻하게 축복해 주시면 감사하겠습니다.
-        <span class="cursor">▼</span>
       </div>
+      <div class="story-avatar story-avatar2"></div>
+      <div class="dialogue-arrow">▶</div>
     </div>
+
     <div class="party-card">
       <b>PARTY 1</b> 우덕환 · 황금순 의 장남 <b>신범</b><br>
       <b>PARTY 2</b> 김용진 · 김미자 의 장녀 <b>한아</b>
@@ -166,26 +178,17 @@
       <div class="item-slot">
         <svg class="ic-coin" viewBox="0 0 8 8"></svg>
         <div class="item-info"><div class="who">신랑 우신범</div><div class="num">기업은행 552-048765-01-010</div></div>
-        <div class="item-actions">
-          <button class="pixel-btn small" onclick="copyText('기업은행 552-048765-01-010 (우신범)', this)">복사</button>
-          <a class="pixel-btn small pink" href="여기에_카카오페이_송금링크" target="_blank" rel="noopener" onclick="return checkKakaoLink(this)">카톡송금</a>
-        </div>
+        <button class="pixel-btn small" onclick="copyText('기업은행 552-048765-01-010 (우신범)', this)">복사</button>
       </div>
       <div class="item-slot">
         <svg class="ic-coin" viewBox="0 0 8 8"></svg>
         <div class="item-info"><div class="who">신랑 父 우덕환</div><div class="num">K뱅크 100-216-581458</div></div>
-        <div class="item-actions">
-          <button class="pixel-btn small" onclick="copyText('K뱅크 100-216-581458 (우덕환)', this)">복사</button>
-          <a class="pixel-btn small pink" href="여기에_카카오페이_송금링크" target="_blank" rel="noopener" onclick="return checkKakaoLink(this)">카톡송금</a>
-        </div>
+        <button class="pixel-btn small" onclick="copyText('K뱅크 100-216-581458 (우덕환)', this)">복사</button>
       </div>
       <div class="item-slot">
         <svg class="ic-coin" viewBox="0 0 8 8"></svg>
         <div class="item-info"><div class="who">신랑 母 황금순</div><div class="num">우리은행 447-278701-02-001</div></div>
-        <div class="item-actions">
-          <button class="pixel-btn small" onclick="copyText('우리은행 447-278701-02-001 (황금순)', this)">복사</button>
-          <a class="pixel-btn small pink" href="여기에_카카오페이_송금링크" target="_blank" rel="noopener" onclick="return checkKakaoLink(this)">카톡송금</a>
-        </div>
+        <button class="pixel-btn small" onclick="copyText('우리은행 447-278701-02-001 (황금순)', this)">복사</button>
       </div>
     </div>
 
@@ -193,29 +196,19 @@
       <div class="item-slot">
         <svg class="ic-gift" viewBox="0 0 9 9"></svg>
         <div class="item-info"><div class="who">신부 김한아</div><div class="num">하나은행 367-910018-47105</div></div>
-        <div class="item-actions">
-          <button class="pixel-btn small" onclick="copyText('하나은행 367-910018-47105 (김한아)', this)">복사</button>
-          <a class="pixel-btn small pink" href="여기에_카카오페이_송금링크" target="_blank" rel="noopener" onclick="return checkKakaoLink(this)">카톡송금</a>
-        </div>
+        <button class="pixel-btn small" onclick="copyText('하나은행 367-910018-47105 (김한아)', this)">복사</button>
       </div>
       <div class="item-slot">
         <svg class="ic-gift" viewBox="0 0 9 9"></svg>
         <div class="item-info"><div class="who">신부 父 김용진</div><div class="num">농협 152-02-461863</div></div>
-        <div class="item-actions">
-          <button class="pixel-btn small" onclick="copyText('농협 152-02-461863 (김용진)', this)">복사</button>
-          <a class="pixel-btn small pink" href="여기에_카카오페이_송금링크" target="_blank" rel="noopener" onclick="return checkKakaoLink(this)">카톡송금</a>
-        </div>
+        <button class="pixel-btn small" onclick="copyText('농협 152-02-461863 (김용진)', this)">복사</button>
       </div>
       <div class="item-slot">
         <svg class="ic-gift" viewBox="0 0 9 9"></svg>
         <div class="item-info"><div class="who">신부 母 김미자</div><div class="num">신한은행 110-555-276995</div></div>
-        <div class="item-actions">
-          <button class="pixel-btn small" onclick="copyText('신한은행 110-555-276995 (김미자)', this)">복사</button>
-          <a class="pixel-btn small pink" href="여기에_카카오페이_송금링크" target="_blank" rel="noopener" onclick="return checkKakaoLink(this)">카톡송금</a>
-        </div>
+        <button class="pixel-btn small" onclick="copyText('신한은행 110-555-276995 (김미자)', this)">복사</button>
       </div>
     </div>
-    <p class="acc-note">"카톡송금" 버튼은 각자의 카카오페이 개인 송금 링크를 연결해야 작동합니다. 아래 README를 참고해 링크를 넣어주세요.</p>
   </section>
 
   <!-- MESSAGE BOARD -->

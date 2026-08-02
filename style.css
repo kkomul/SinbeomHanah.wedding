@@ -305,17 +305,18 @@ h2.sec-title{
 }
 .story-avatar{
   width:40px; height:40px;
-  background-image:url('images/sprites/story-avatar.png');
   background-size:cover;
   background-position:center;
   image-rendering:pixelated;
   image-rendering:crisp-edges;
   border:3px solid var(--dark);
   flex-shrink:0;
-  /* 이 대화창 아이콘은 위 히어로의 걷는 캐릭터와 완전히 별개의 이미지입니다.
-     images/sprites/story-avatar.png 파일만 바꾸면 원하는 아이콘으로 교체됩니다
-     (정사각형 이미지 권장, 애니메이션 없는 정지 이미지입니다). */
+  /* 이 대화창 아이콘들은 위 히어로의 걷는 캐릭터와 완전히 별개의 이미지입니다.
+     정지 이미지이며, 아래 두 파일만 바꾸면 원하는 아이콘으로 교체됩니다
+     (둘 다 정사각형 이미지 권장). */
 }
+.story-avatar1{ background-image:url('images/sprites/story-avatar1.png'); } /* 신랑이 말할 때 */
+.story-avatar2{ background-image:url('images/sprites/story-avatar2.png'); } /* 신부가 말할 때 */
 /* 퍼센트 대신 실제 픽셀(px) 단위로 위치를 옮겨야 프레임 사이가 잘리지 않고
    깔끔하게 전환됩니다 (퍼센트 방식은 프레임 경계에서 옆 프레임이 살짝 겹쳐 보이는
    문제가 있습니다). --fw 는 각 스프라이트의 width 값과 항상 같아야 합니다. */
@@ -488,7 +489,8 @@ h2.sec-title{
 .lightbox-arrow:active{ transform:translateY(-50%) translateY(2px); }
 
 /* ---------- DIALOGUE BOX ---------- */
-.dialogue{ display:flex; gap:14px; align-items:flex-start; }
+.dialogue{ display:flex; gap:14px; align-items:flex-start; margin-bottom:14px; }
+.dialogue.reverse{ margin-bottom:0; }
 .dialogue svg{ width:56px; height:56px; flex-shrink:0; }
 .speech{
   flex:1;
@@ -507,9 +509,34 @@ h2.sec-title{
   border-bottom:7px solid transparent;
   border-right:9px solid var(--dark);
 }
+/* 아바타가 오른쪽에 있는 두 번째 대화 박스 — 꼬리를 반대(오른쪽)로 뒤집습니다 */
+.speech.tail-right::before{
+  left:auto;
+  right:-9px;
+  border-right:none;
+  border-left:9px solid var(--dark);
+}
 .speech .cursor{
   display:block; text-align:right; color:var(--mid); font-size:10px; margin-top:6px;
   animation:blink 1s steps(1) infinite;
+}
+/* 두 대화 박스 사이의 작은 장식 아이콘 (하트 + 별) */
+.dialogue-deco{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  padding:2px 0 2px 6px;
+  margin-bottom:14px;
+}
+.dialogue-deco svg{ width:18px; height:16px; }
+.dialogue-deco svg:first-child{ transform:rotate(-12deg); }
+.dialogue-deco svg:last-child{ transform:rotate(14deg); margin-left:6px; }
+/* 두 번째 대화 박스 끝의 화살표 — 다음 섹션으로 이어지는 느낌 */
+.dialogue-arrow{
+  align-self:center;
+  color:var(--dark);
+  font-size:16px;
+  flex-shrink:0;
 }
 .party-card{
   margin-top:22px;
@@ -576,8 +603,6 @@ h2.sec-title{
 .item-info{ flex:1; min-width:120px; }
 .item-info .who{ font-size:11px; color:var(--mid); margin-bottom:2px; }
 .item-info .num{ font-size:12px; font-weight:700; word-break:break-all; }
-.item-actions{ display:flex; gap:6px; flex-shrink:0; margin-left:auto; }
-.item-actions .pixel-btn{ text-decoration:none; display:inline-block; }
 .acc-note{ text-align:center; font-size:10.5px; color:var(--mid); margin-top:12px; line-height:1.8; }
 
 /* ---------- MESSAGE BOARD ---------- */
