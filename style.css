@@ -215,14 +215,15 @@ h2.sec-title{
   width:50%;
   height:100%;
   object-fit:cover;
+  object-position:top; /* 이미지의 위쪽 내용이 보이도록 (가운데 기준으로 자르면 내용이 없는 빈 영역이 걸릴 수 있음) */
   display:block;
   flex-shrink:0;
 }
 
 /* 2) 구름 레이어 */
 .clouds-layer{
-  top:8%;
-  height:22%;
+  top:6%;
+  height:32%;
   opacity:.9;
 }
 .cloud-track{
@@ -425,8 +426,8 @@ h2.sec-title{
   box-shadow: inset -2px -2px 0 var(--yellow-deep), inset 2px 2px 0 #FFF6D0;
   display:flex; align-items:center; justify-content:center;
 }
-.gallery-arrow.left{ left:-32px; }
-.gallery-arrow.right{ right:-32px; }
+.gallery-arrow.left{ left:-42px; }
+.gallery-arrow.right{ right:-42px; }
 .gallery-arrow:active{ transform:translateY(-50%) translateY(2px); }
 .gallery-dots{
   display:flex;
