@@ -303,6 +303,14 @@ h2.sec-title{
   animation-duration:.5s;
   margin-bottom:6px;
 }
+.spr-gecko{
+  width:48px; height:28px;
+  --fw:48px;
+  background-image:url('images/sprites/gecko.png');
+  animation-name:spriteWalk;
+  animation-duration:.45s;
+  margin-bottom:2px;
+}
 .story-avatar{
   width:40px; height:40px;
   background-size:cover;
