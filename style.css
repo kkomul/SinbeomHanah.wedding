@@ -215,7 +215,6 @@ h2.sec-title{
   width:50%;
   height:100%;
   object-fit:cover;
-  object-position:top; /* 이미지의 위쪽 내용이 보이도록 (가운데 기준으로 자르면 내용이 없는 빈 영역이 걸릴 수 있음) */
   display:block;
   flex-shrink:0;
 }
@@ -226,6 +225,7 @@ h2.sec-title{
   height:32%;
   opacity:.9;
 }
+.clouds-layer .tile{ object-position:top; } /* 구름 이미지 위쪽이 보이도록 (땅 레이어와는 별개로 적용) */
 .cloud-track{
   animation:scrollLeft 48s linear infinite;
 }
