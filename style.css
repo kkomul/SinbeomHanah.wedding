@@ -317,6 +317,9 @@ h2.sec-title{
 }
 .story-avatar1{ background-image:url('images/sprites/story-avatar1.png'); } /* 신랑이 말할 때 */
 .story-avatar2{ background-image:url('images/sprites/story-avatar2.png'); } /* 신부가 말할 때 */
+/* 첫 번째 말풍선 오른쪽에 보이지 않게 넣는 여백 — 아바타와 정확히 같은 너비라서,
+   두 번째 말풍선(오른쪽에 아바타가 있는 쪽)과 끝나는 위치가 서로 맞춰집니다. */
+.story-avatar-spacer{ width:40px; flex-shrink:0; visibility:hidden; }
 /* 퍼센트 대신 실제 픽셀(px) 단위로 위치를 옮겨야 프레임 사이가 잘리지 않고
    깔끔하게 전환됩니다 (퍼센트 방식은 프레임 경계에서 옆 프레임이 살짝 겹쳐 보이는
    문제가 있습니다). --fw 는 각 스프라이트의 width 값과 항상 같아야 합니다. */
