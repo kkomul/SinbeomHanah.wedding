@@ -569,6 +569,12 @@ h2.sec-title{
 .quest-line{ text-align:center; margin-top:18px; font-size:12px; color:var(--mid); }
 
 /* ---------- MAP / CRT ---------- */
+/* ---------- FAMILY PHOTO ---------- */
+.family-photo{
+  display:block;
+  width:100%;
+}
+
 .venue-name{ text-align:center; font-size:15px; margin-bottom:6px; font-weight:700; }
 .venue-addr{ text-align:center; font-size:12px; color:var(--mid); margin-bottom:14px; }
 .copy-row{ display:flex; justify-content:center; margin-bottom:18px; }
