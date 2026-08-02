@@ -570,6 +570,7 @@ h2.sec-title{
 
 /* ---------- MAP / CRT ---------- */
 /* ---------- FAMILY PHOTO ---------- */
+.family-photo-section{ padding-top:24px; padding-bottom:24px; }
 .family-photo{
   display:block;
   width:100%;
