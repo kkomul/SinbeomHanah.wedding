@@ -296,19 +296,19 @@ h2.sec-title{
   animation-duration:.8s;
 }
 .spr-cat{
-  width:75px; height:55px;
-  --fw:75px;
+  width:95px; height:55px;
+  --fw:95px;
   background-image:url('images/sprites/cat.png');
   animation-name:spriteWalk;
   animation-duration:.5s;
   margin-bottom:6px;
 }
 .spr-gecko{
-  width:48px; height:28px;
-  --fw:48px;
+  width:36px; height:21px;
+  --fw:36px;
   background-image:url('images/sprites/gecko.png');
   animation-name:spriteWalk;
-  animation-duration:.45s;
+  animation-duration:.8s;
   margin-bottom:2px;
 }
 .story-avatar{
