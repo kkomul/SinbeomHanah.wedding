@@ -35,13 +35,19 @@
          이미지를 다른 크기로 바꾸면 별도 설정 없이 자동으로 맞춰집니다. -->
     <img src="images/bg-castle.png" class="hero-bg-img" alt="">
 
-    <!-- 2) 구름 레이어 (좌→우 무한 스크롤) -->
-    <div class="scroll-layer clouds-layer">
-      <div class="scroll-track cloud-track">
-        <img src="images/clouds.png" class="tile" alt="">
-        <img src="images/clouds.png" class="tile" alt="">
+    <!-- 2) 구름 레이어 (좌→우 무한 스크롤)
+         이제 이미지 원본 비율 그대로 표시됩니다 (잘리지 않음). -->
+    <div class="clouds-layer">
+      <div class="cloud-track">
+        <img src="images/clouds.png" class="cloud-tile" alt="">
+        <img src="images/clouds.png" class="cloud-tile" alt="">
       </div>
     </div>
+
+    <!-- 2-1) 성/산/땅 중경 레이어 — 하늘 부분이 투명해서, 그 틈으로 구름이
+         뒤에서 지나가는 것처럼 보입니다. 구름 레이어보다 뒤에 두면 안 되고
+         반드시 구름 레이어 다음(뒤쪽 DOM)에 와야 위에 겹쳐집니다. -->
+    <img src="images/bg-castle-wide.png" class="castle-mid-img" alt="">
 
     <!-- 타이틀 로고 이미지 -->
     <img src="images/title-logo.png" class="title-logo-img" alt="우신범 한아 결혼식">

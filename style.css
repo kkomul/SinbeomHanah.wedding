@@ -198,7 +198,44 @@ h2.sec-title{
   z-index:0;
 }
 
-/* 공용 스크롤 레이어 컴포넌트 */
+/* 2) 구름 레이어 — 이제 자르지 않고 원본 비율 그대로 보여줍니다.
+   가로 스크롤(무한 루프)을 위해 좌우만 overflow:hidden, 세로는 그대로 다 보이게
+   overflow-y:visible 을 씁니다. */
+.clouds-layer{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  overflow-x:hidden;
+  overflow-y:visible;
+  z-index:1;
+  opacity:.9;
+}
+.cloud-track{
+  display:flex;
+  width:200%;
+  animation:scrollLeft 48s linear infinite;
+}
+.cloud-tile{
+  width:50%;
+  height:auto; /* 원본 비율 그대로, 잘리지 않음 */
+  display:block;
+  flex-shrink:0;
+}
+
+/* 2-1) 성/산/땅 중경 레이어 — 하늘 부분이 투명한 이미지라서, 그 틈으로
+   구름이 뒤에서 지나가는 것처럼 보입니다. 위치를 옮기고 싶다면 top 값만
+   조정하면 됩니다 (구름 레이어와 같은 top 값으로 맞춰야 자연스럽습니다). */
+.castle-mid-img{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:auto;
+  z-index:1;
+}
+
+/* 공용 스크롤 레이어 컴포넌트 (땅 레이어에서 계속 사용) */
 .scroll-layer{
   position:absolute;
   left:0;
@@ -217,17 +254,6 @@ h2.sec-title{
   object-fit:cover;
   display:block;
   flex-shrink:0;
-}
-
-/* 2) 구름 레이어 */
-.clouds-layer{
-  top:6%;
-  height:32%;
-  opacity:.9;
-}
-.clouds-layer .tile{ object-position:top; } /* 구름 이미지 위쪽이 보이도록 (땅 레이어와는 별개로 적용) */
-.cloud-track{
-  animation:scrollLeft 48s linear infinite;
 }
 
 /* 3) 땅 레이어 (구름보다 빠른 속도로 패럴럭스 효과) */
