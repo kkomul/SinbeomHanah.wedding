@@ -14,6 +14,16 @@
 <body oncontextmenu="return false;" ondragstart="return false;">
 
 <!-- =========================================================
+     배경음악(BGM)
+     파일 교체: audio/bgm.mp3 를 같은 파일명으로 덮어쓰면 됩니다.
+     모바일 브라우저는 사용자가 화면을 한 번 터치/클릭하기 전에는
+     오디오 자동재생을 막기 때문에, 첫 터치/클릭 시 재생을 시작하도록
+     script.js에서 처리합니다. 우측 상단 버튼으로 음소거/해제 가능합니다.
+========================================================== -->
+<audio id="bgmAudio" src="audio/bgm.mp3" loop preload="auto"></audio>
+<button class="bgm-toggle" id="bgmToggle" onclick="toggleBgm()" aria-label="배경음악 음소거">🔊</button>
+
+<!-- =========================================================
      꽃잎 파티클 효과 — 화면 전체에 살짝 흩날리는 장식.
      이미지 교체: images/petals/petal1.png ~ petal4.png 를
      같은 파일명으로 덮어쓰면 바로 반영됩니다. (투명 배경 PNG, 60x60px 내외 권장)

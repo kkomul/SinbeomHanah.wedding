@@ -52,6 +52,30 @@ body{
   justify-content:center;
 }
 .pixel-font{ font-family:'Press Start 2P', 'Galmuri11', monospace; }
+
+/* =========================================================
+   배경음악(BGM) 음소거 토글 — 항상 화면 우측 상단에 고정
+========================================================= */
+.bgm-toggle{
+  position:fixed;
+  top:14px;
+  right:14px;
+  width:34px;
+  height:34px;
+  border:3px solid var(--dark);
+  background:var(--cream);
+  color:var(--ink);
+  font-size:15px;
+  line-height:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  z-index:90; /* 방명록/사진 확대 모달(100 이상)이 열리면 자연스럽게 가려집니다 */
+  box-shadow: inset -2px -2px 0 rgba(0,0,0,0.08), inset 2px 2px 0 rgba(255,255,255,0.6);
+}
+.bgm-toggle:active{ transform:translateY(1px); }
+
 /* =========================================================
    꽃잎 파티클 (전체 페이지에 흩날리는 장식)
    이미지 교체: images/petals/petal1.png ~ petal4.png
@@ -258,7 +282,7 @@ h2.sec-title{
 
 /* 3) 땅 레이어 (구름보다 빠른 속도로 패럴럭스 효과) */
 .ground-layer{
-  bottom:18%;
+  bottom:14%;
   height:17%;
 }
 .ground-track{

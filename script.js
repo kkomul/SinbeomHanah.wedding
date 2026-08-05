@@ -21,6 +21,37 @@ document.addEventListener('keydown', (e)=>{
 });
 
 /* =========================================================
+   배경음악(BGM)
+   -----------------------------------------------------------
+   모바일 브라우저는 사용자가 화면을 최소 한 번 터치/클릭하기 전에는
+   오디오 자동재생을 허용하지 않습니다. 그래서 페이지의 아무 곳이나
+   처음 터치/클릭하는 순간 재생을 시작하도록 만들고, 그 다음부터는
+   loop 속성으로 계속 무한 반복됩니다.
+========================================================= */
+(function initBgm(){
+  const audio = document.getElementById('bgmAudio');
+  const btn = document.getElementById('bgmToggle');
+  if(!audio || !btn) return;
+
+  function updateBgmIcon(){
+    btn.textContent = audio.muted ? '🔇' : '🔊';
+  }
+  updateBgmIcon();
+
+  function startBgmOnce(){
+    audio.play().catch(()=>{ /* 재생이 막히면 다음 터치 때 다시 시도됩니다 */ });
+  }
+  document.addEventListener('touchstart', startBgmOnce, { once:true, passive:true });
+  document.addEventListener('click', startBgmOnce, { once:true });
+
+  window.toggleBgm = function(){
+    audio.muted = !audio.muted;
+    if(!audio.muted){ audio.play().catch(()=>{}); }
+    updateBgmIcon();
+  };
+})();
+
+/* =========================================================
    PIXEL ART ENGINE
    캐릭터/아이콘은 코드로 그려집니다 (이미지 파일 없음).
    실제 이미지 리소스(배경/구름/땅/타이틀로고/날짜리본)는
