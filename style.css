@@ -258,7 +258,7 @@ h2.sec-title{
 
 /* 3) 땅 레이어 (구름보다 빠른 속도로 패럴럭스 효과) */
 .ground-layer{
-  bottom:16.5%;
+  bottom:18%;
   height:17%;
 }
 .ground-track{
