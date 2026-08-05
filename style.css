@@ -356,7 +356,7 @@ h2.sec-title{
   background-image:url('images/sprites/cat.png');
   animation-name:spriteWalk;
   animation-duration:.5s;
-  margin-bottom:3px;
+  margin-bottom:0px;
 }
 .spr-gecko{
   width:36px; height:21px;
