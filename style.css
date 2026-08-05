@@ -283,7 +283,7 @@ h2.sec-title{
 /* 3) 땅 레이어 (구름보다 빠른 속도로 패럴럭스 효과) */
 .ground-layer{
   bottom:14%;
-  height:25%;
+  height:17%;
 }
 .ground-track{
   animation:scrollLeft 16s linear infinite;
@@ -318,7 +318,7 @@ h2.sec-title{
 .sprite-row{
   position:absolute;
   z-index:2;
-  bottom:38%; /* 땅(ground-layer) 윗면 높이에 맞춰 발이 땅 위에 서도록 고정 */
+  bottom:30%; /* 땅(ground-layer) 윗면 높이에 맞춰 발이 땅 위에 서도록 고정 */
   left:50%;
   transform:translateX(-50%);
   display:flex;
