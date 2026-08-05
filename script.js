@@ -729,7 +729,7 @@ async function shareKakao(){
         content: {
           title: '우신범 ♥ 김한아 결혼식에 초대합니다',
           description: '2026.10.31(토) 오전 11:30 · 대구중앙컨벤션센터',
-          imageUrl: new URL('images/title-logo.png', pageUrl).href,
+          imageUrl: new URL('images/kakao-logo.png', pageUrl).href,
           link: { mobileWebUrl: pageUrl, webUrl: pageUrl }
         },
         buttons: [
