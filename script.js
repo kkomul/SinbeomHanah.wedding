@@ -710,7 +710,7 @@ function closeGuestbookModal(){
    아직 채우지 않았다면(placeholder 상태) 자동으로 기존처럼
    모바일 기본 공유 기능(Web Share API) → 링크 복사 순서로 대체됩니다.
 ========================================================= */
-const KAKAO_JS_KEY = 'PASTE_YOUR_KAKAO_JAVASCRIPT_KEY_HERE';
+const KAKAO_JS_KEY = '23ab99a5cfcb362b780e0cee91825956';
 
 function kakaoConfigured(){
   return KAKAO_JS_KEY && KAKAO_JS_KEY.indexOf('PASTE_') !== 0 && typeof Kakao !== 'undefined';
