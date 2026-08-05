@@ -258,7 +258,7 @@ h2.sec-title{
 
 /* 3) 땅 레이어 (구름보다 빠른 속도로 패럴럭스 효과) */
 .ground-layer{
-  bottom:14%;
+  bottom:16.5%;
   height:17%;
 }
 .ground-track{
@@ -276,9 +276,13 @@ h2.sec-title{
   z-index:2;
   top:10%;
   left:50%;
-  transform:translateX(-50%);
   width:68%;
   max-width:280px;
+  animation:titleFloat 3.2s ease-in-out infinite;
+}
+@keyframes titleFloat{
+  0%, 100%{ transform:translateX(-50%) translateY(0); }
+  50%{ transform:translateX(-50%) translateY(-8px); }
 }
 
 /* 캐릭터 스프라이트 (이미지 스프라이트 시트, 4프레임 걷기 애니메이션)
@@ -671,25 +675,13 @@ h2.sec-title{
 .modal-head{ display:flex; justify-content:space-between; align-items:center; padding:14px 16px; background:var(--dark); }
 .modal-head h3{ font-size:12px; color:#fff; font-family:'Press Start 2P',monospace; }
 .modal-close{ background:#fff; border:2px solid var(--dark); width:22px; height:22px; color:var(--dark); cursor:pointer; font-weight:700; }
-.modal-body{ padding:16px; overflow-y:auto; }
+.modal-body{ padding:16px; overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; }
 
 /* ---------- FLOWER DIVIDER ---------- */
 .flower-divider{
-  width:100%;
-  aspect-ratio: 460 / 234;
-  background-repeat:no-repeat;
-  background-size:cover;
-  background-position:center;
-}
-
-/* ---------- FOOTER ----------
-   기본값: 이미지 없이 은은한 크림색 배경.
-   커스텀 이미지를 쓰려면 background-image를 이 클래스에 추가하세요
-   (배경으로 쓸 경우에도 .footer-inner 카드가 텍스트 가독성을 잡아줍니다). */
-.footer{
   position:relative;
   width:100%;
-  padding:50px 20px;
+  aspect-ratio: 460 / 234;
   background-repeat:no-repeat;
   background-size:cover;
   background-position:center;
@@ -697,15 +689,17 @@ h2.sec-title{
   align-items:center;
   justify-content:center;
 }
+
+/* ---------- THE END 박스 (flower-divider 이미지 위에 겹쳐서 표시) ---------- */
 .footer-inner{
   text-align:center;
-  background:rgba(255,255,255,0.78);
+  background:rgba(255,255,255,0.85);
   border:3px solid var(--dark);
   padding:16px 22px;
 }
-.footer svg{ width:34px; height:34px; margin:0 auto 10px; display:block; }
-.footer .thanks{ font-size:13px; margin-bottom:8px; color:var(--ink); }
-.footer .small{ font-size:8px; color:var(--mid); letter-spacing:1px; line-height:1.6; }
+.footer-inner svg{ width:34px; height:34px; margin:0 auto 10px; display:block; }
+.footer-inner .thanks{ font-size:13px; margin-bottom:8px; color:var(--ink); }
+.footer-inner .small{ font-size:8px; color:var(--mid); letter-spacing:1px; line-height:1.6; }
 .share-row{ display:flex; gap:8px; justify-content:center; margin-top:16px; }
 
 .toast{
@@ -717,6 +711,6 @@ h2.sec-title{
 .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
 
 @media (prefers-reduced-motion: reduce){
-  .cloud-track, .ground-track, .press-start, .speech .cursor{ animation:none !important; }
+  .cloud-track, .ground-track, .press-start, .speech .cursor, .title-logo-img{ animation:none !important; }
   .petal-layer{ display:none; }
 }

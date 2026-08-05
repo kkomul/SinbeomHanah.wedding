@@ -648,13 +648,20 @@ async function submitGuestbook(){
   btn.disabled = false;
 }
 function openGuestbookModal(){
+  /* 모달을 먼저 즉시 띄우고, 목록은 그 다음에 비동기로 채웁니다.
+     (구글 스프레드시트 연동 시 fetch 응답을 기다리는 동안 모달 자체가
+     늦게 뜨는 것처럼 보였던 문제를 고칩니다) */
+  document.getElementById('gbFullList').innerHTML = '<div class="gb-empty">불러오는 중...</div>';
+  document.getElementById('gbModal').classList.add('open');
+  document.body.style.overflow = 'hidden'; /* 모바일에서 뒤쪽 페이지가 같이 스크롤되는 것을 방지 */
+
   loadGuestbook().then(list=>{
     document.getElementById('gbFullList').innerHTML = list.map(entryHtml).join('') || '<div class="gb-empty">등록된 메시지가 없습니다</div>';
-    document.getElementById('gbModal').classList.add('open');
   });
 }
 function closeGuestbookModal(){
   document.getElementById('gbModal').classList.remove('open');
+  document.body.style.overflow = '';
 }
 
 /* ---------- 공유하기 ----------
