@@ -378,6 +378,8 @@ let lbScale = 1;
 let lbPanX = 0;
 let lbPanY = 0;
 const lightboxBoxEl = document.getElementById('lightboxImg');
+const lbActivePointers = new Map(); /* pointerId -> {x,y} */
+let lbGestureMode = null; /* 'pinch' | 'pan' | 'swipe' | null */
 
 function applyLbTransform(withTransition){
   if(!lightboxBoxEl) return;
@@ -386,16 +388,25 @@ function applyLbTransform(withTransition){
   lightboxBoxEl.style.cursor = lbScale > 1 ? 'grab' : 'default';
 }
 function clampLbPan(){
-  /* 확대된 만큼만 이동 가능하게 하여 사진이 화면 밖으로 너무 멀리 안 나가게 합니다 */
+  /* 확대된 만큼만 이동 가능하게 하여 사진이 화면 밖으로 너무 멀리 안 나가게 합니다.
+     주의: getBoundingClientRect()는 transform(scale)이 적용된 "이후" 크기를
+     돌려주기 때문에, 그 값을 다시 lbScale과 곱하면 배율이 중복 적용되는
+     버그가 있었습니다. offsetWidth/offsetHeight는 transform의 영향을 받지
+     않는 "원본 레이아웃 크기"라서 이 문제가 생기지 않습니다. */
   if(!lightboxBoxEl) return;
-  const rect = lightboxBoxEl.getBoundingClientRect();
-  const maxX = Math.max(0, (rect.width * lbScale - rect.width) / 2);
-  const maxY = Math.max(0, (rect.height * lbScale - rect.height) / 2);
+  const w = lightboxBoxEl.offsetWidth;
+  const h = lightboxBoxEl.offsetHeight;
+  const maxX = Math.max(0, (w * lbScale - w) / 2);
+  const maxY = Math.max(0, (h * lbScale - h) / 2);
   lbPanX = Math.max(-maxX, Math.min(maxX, lbPanX));
   lbPanY = Math.max(-maxY, Math.min(maxY, lbPanY));
 }
 function resetLbZoom(){
   lbScale = 1; lbPanX = 0; lbPanY = 0;
+  /* 사진을 넘길 때는 진행 중이던 핀치/팬/스와이프 제스처 상태도 같이 초기화해서,
+     다음 사진에 이전 제스처의 잔여 값이 넘어가지 않게 합니다. */
+  lbActivePointers.clear();
+  lbGestureMode = null;
   applyLbTransform(false);
 }
 function lightboxZoomBy(delta){
@@ -406,65 +417,65 @@ function lightboxZoomBy(delta){
 }
 
 if(lightboxBoxEl){
-  const activePointers = new Map(); /* pointerId -> {x,y} */
   let pinchStartDist = 0;
   let pinchStartScale = 1;
   let panStartX = 0, panStartY = 0, panOriginX = 0, panOriginY = 0;
   let swipeStartX = 0, swipeDeltaX = 0;
-  let gestureMode = null; /* 'pinch' | 'pan' | 'swipe' | null */
   let lastTapTime = 0;
 
   function dist(a, b){ return Math.hypot(a.x - b.x, a.y - b.y); }
 
   lightboxBoxEl.addEventListener('pointerdown', (e)=>{
-    activePointers.set(e.pointerId, { x:e.clientX, y:e.clientY });
+    lbActivePointers.set(e.pointerId, { x:e.clientX, y:e.clientY });
     lightboxBoxEl.style.transition = 'none';
 
-    if(activePointers.size === 2){
-      const pts = [...activePointers.values()];
+    if(lbActivePointers.size === 2){
+      const pts = [...lbActivePointers.values()];
       pinchStartDist = dist(pts[0], pts[1]);
       pinchStartScale = lbScale;
-      gestureMode = 'pinch';
-    }else if(activePointers.size === 1){
+      lbGestureMode = 'pinch';
+    }else if(lbActivePointers.size === 1){
       if(lbScale > 1){
-        gestureMode = 'pan';
+        lbGestureMode = 'pan';
         panStartX = e.clientX; panStartY = e.clientY;
         panOriginX = lbPanX; panOriginY = lbPanY;
       }else{
-        gestureMode = 'swipe';
+        lbGestureMode = 'swipe';
         swipeStartX = e.clientX; swipeDeltaX = 0;
       }
     }
   });
 
   lightboxBoxEl.addEventListener('pointermove', (e)=>{
-    if(!activePointers.has(e.pointerId)) return;
-    activePointers.set(e.pointerId, { x:e.clientX, y:e.clientY });
+    if(!lbActivePointers.has(e.pointerId)) return;
+    lbActivePointers.set(e.pointerId, { x:e.clientX, y:e.clientY });
 
-    if(gestureMode === 'pinch' && activePointers.size === 2){
-      const pts = [...activePointers.values()];
+    if(lbGestureMode === 'pinch' && lbActivePointers.size === 2){
+      const pts = [...lbActivePointers.values()];
       const newDist = dist(pts[0], pts[1]);
       lbScale = Math.max(LB_MIN_SCALE, Math.min(LB_MAX_SCALE, pinchStartScale * (newDist / pinchStartDist)));
       clampLbPan();
       applyLbTransform(false);
-    }else if(gestureMode === 'pan'){
+    }else if(lbGestureMode === 'pan'){
       lbPanX = panOriginX + (e.clientX - panStartX);
       lbPanY = panOriginY + (e.clientY - panStartY);
       clampLbPan();
       applyLbTransform(false);
-    }else if(gestureMode === 'swipe'){
+    }else if(lbGestureMode === 'swipe'){
       swipeDeltaX = e.clientX - swipeStartX;
     }
   });
 
   function endPointer(e){
-    activePointers.delete(e.pointerId);
+    lbActivePointers.delete(e.pointerId);
 
-    if(gestureMode === 'swipe' && activePointers.size === 0){
+    if(lbGestureMode === 'swipe' && lbActivePointers.size === 0){
       if(swipeDeltaX > 40){
         lightboxMove(-1);
+        return; /* lightboxMove → resetLbZoom 안에서 이미 상태 초기화가 끝났으므로 아래 로직을 건너뜁니다 */
       }else if(swipeDeltaX < -40){
         lightboxMove(1);
+        return;
       }else{
         /* 스와이프도 아니고 핀치도 아닌, 움직임이 거의 없는 탭 → 더블탭 확대 판정 */
         const now = Date.now();
@@ -476,17 +487,17 @@ if(lightboxBoxEl){
         }
       }
     }
-    if(activePointers.size < 2 && gestureMode === 'pinch'){
+    if(lbActivePointers.size < 2 && lbGestureMode === 'pinch'){
       /* 손가락 하나를 뗀 경우, 남은 손가락으로 계속 팬 할 수 있게 전환 */
-      if(activePointers.size === 1 && lbScale > 1){
-        const [remaining] = [...activePointers.values()];
-        gestureMode = 'pan';
+      if(lbActivePointers.size === 1 && lbScale > 1){
+        const [remaining] = [...lbActivePointers.values()];
+        lbGestureMode = 'pan';
         panStartX = remaining.x; panStartY = remaining.y;
         panOriginX = lbPanX; panOriginY = lbPanY;
       }
     }
-    if(activePointers.size === 0){
-      gestureMode = null;
+    if(lbActivePointers.size === 0){
+      lbGestureMode = null;
       applyLbTransform(true);
     }
   }
