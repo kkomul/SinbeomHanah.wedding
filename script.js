@@ -341,6 +341,7 @@ function renderLightboxImage(){
     box.style.backgroundImage = `url(${src})`;
   };
   pre.src = src;
+  resetLbZoom();
 }
 function openLightbox(){
   renderLightboxImage();
@@ -362,36 +363,137 @@ function lightboxMove(dir){
   renderSlots();
   setTrack(REST_PCT, false);
   updateGalleryDots();
-  renderLightboxImage();
+  renderLightboxImage(); /* 내부에서 확대 상태도 초기화됩니다 */
 }
 
-let lbStartX = 0;
-let lbDeltaX = 0;
-let lbDragging = false;
+/* =========================================================
+   사진 확대(핀치 줌 / 더블탭) + 확대 시 드래그로 이동
+   -----------------------------------------------------------
+   확대되지 않은 상태(1배)에서는 기존처럼 좌우로 드래그하면 사진이 넘어가고,
+   확대된 상태(1배 초과)에서는 드래그가 "사진 이동(팬)"으로 바뀝니다.
+========================================================= */
+const LB_MIN_SCALE = 1;
+const LB_MAX_SCALE = 4;
+let lbScale = 1;
+let lbPanX = 0;
+let lbPanY = 0;
 const lightboxBoxEl = document.getElementById('lightboxImg');
-if(lightboxBoxEl){
-  lightboxBoxEl.addEventListener('pointerdown', (e)=>{
-    lbDragging = true;
-    lbStartX = e.clientX;
-    lbDeltaX = 0;
-  });
-  lightboxBoxEl.addEventListener('pointermove', (e)=>{
-    if(!lbDragging) return;
-    lbDeltaX = e.clientX - lbStartX;
-  });
-  const endLbDrag = ()=>{
-    if(!lbDragging) return;
-    lbDragging = false;
-    if(lbDeltaX > 40){
-      lightboxMove(-1);
-    }else if(lbDeltaX < -40){
-      lightboxMove(1);
-    }
-    lbDeltaX = 0;
-  };
-  lightboxBoxEl.addEventListener('pointerup', endLbDrag);
-  lightboxBoxEl.addEventListener('pointercancel', endLbDrag);
+
+function applyLbTransform(withTransition){
+  if(!lightboxBoxEl) return;
+  lightboxBoxEl.style.transition = withTransition ? 'transform .2s ease' : 'none';
+  lightboxBoxEl.style.transform = `translate(${lbPanX}px, ${lbPanY}px) scale(${lbScale})`;
+  lightboxBoxEl.style.cursor = lbScale > 1 ? 'grab' : 'default';
 }
+function clampLbPan(){
+  /* 확대된 만큼만 이동 가능하게 하여 사진이 화면 밖으로 너무 멀리 안 나가게 합니다 */
+  if(!lightboxBoxEl) return;
+  const rect = lightboxBoxEl.getBoundingClientRect();
+  const maxX = Math.max(0, (rect.width * lbScale - rect.width) / 2);
+  const maxY = Math.max(0, (rect.height * lbScale - rect.height) / 2);
+  lbPanX = Math.max(-maxX, Math.min(maxX, lbPanX));
+  lbPanY = Math.max(-maxY, Math.min(maxY, lbPanY));
+}
+function resetLbZoom(){
+  lbScale = 1; lbPanX = 0; lbPanY = 0;
+  applyLbTransform(false);
+}
+function lightboxZoomBy(delta){
+  lbScale = Math.max(LB_MIN_SCALE, Math.min(LB_MAX_SCALE, lbScale + delta));
+  if(lbScale === 1){ lbPanX = 0; lbPanY = 0; }
+  clampLbPan();
+  applyLbTransform(true);
+}
+
+if(lightboxBoxEl){
+  const activePointers = new Map(); /* pointerId -> {x,y} */
+  let pinchStartDist = 0;
+  let pinchStartScale = 1;
+  let panStartX = 0, panStartY = 0, panOriginX = 0, panOriginY = 0;
+  let swipeStartX = 0, swipeDeltaX = 0;
+  let gestureMode = null; /* 'pinch' | 'pan' | 'swipe' | null */
+  let lastTapTime = 0;
+
+  function dist(a, b){ return Math.hypot(a.x - b.x, a.y - b.y); }
+
+  lightboxBoxEl.addEventListener('pointerdown', (e)=>{
+    activePointers.set(e.pointerId, { x:e.clientX, y:e.clientY });
+    lightboxBoxEl.style.transition = 'none';
+
+    if(activePointers.size === 2){
+      const pts = [...activePointers.values()];
+      pinchStartDist = dist(pts[0], pts[1]);
+      pinchStartScale = lbScale;
+      gestureMode = 'pinch';
+    }else if(activePointers.size === 1){
+      if(lbScale > 1){
+        gestureMode = 'pan';
+        panStartX = e.clientX; panStartY = e.clientY;
+        panOriginX = lbPanX; panOriginY = lbPanY;
+      }else{
+        gestureMode = 'swipe';
+        swipeStartX = e.clientX; swipeDeltaX = 0;
+      }
+    }
+  });
+
+  lightboxBoxEl.addEventListener('pointermove', (e)=>{
+    if(!activePointers.has(e.pointerId)) return;
+    activePointers.set(e.pointerId, { x:e.clientX, y:e.clientY });
+
+    if(gestureMode === 'pinch' && activePointers.size === 2){
+      const pts = [...activePointers.values()];
+      const newDist = dist(pts[0], pts[1]);
+      lbScale = Math.max(LB_MIN_SCALE, Math.min(LB_MAX_SCALE, pinchStartScale * (newDist / pinchStartDist)));
+      clampLbPan();
+      applyLbTransform(false);
+    }else if(gestureMode === 'pan'){
+      lbPanX = panOriginX + (e.clientX - panStartX);
+      lbPanY = panOriginY + (e.clientY - panStartY);
+      clampLbPan();
+      applyLbTransform(false);
+    }else if(gestureMode === 'swipe'){
+      swipeDeltaX = e.clientX - swipeStartX;
+    }
+  });
+
+  function endPointer(e){
+    activePointers.delete(e.pointerId);
+
+    if(gestureMode === 'swipe' && activePointers.size === 0){
+      if(swipeDeltaX > 40){
+        lightboxMove(-1);
+      }else if(swipeDeltaX < -40){
+        lightboxMove(1);
+      }else{
+        /* 스와이프도 아니고 핀치도 아닌, 움직임이 거의 없는 탭 → 더블탭 확대 판정 */
+        const now = Date.now();
+        if(now - lastTapTime < 350){
+          lightboxZoomBy(lbScale > 1 ? -(lbScale - 1) : 1.4);
+          lastTapTime = 0;
+        }else{
+          lastTapTime = now;
+        }
+      }
+    }
+    if(activePointers.size < 2 && gestureMode === 'pinch'){
+      /* 손가락 하나를 뗀 경우, 남은 손가락으로 계속 팬 할 수 있게 전환 */
+      if(activePointers.size === 1 && lbScale > 1){
+        const [remaining] = [...activePointers.values()];
+        gestureMode = 'pan';
+        panStartX = remaining.x; panStartY = remaining.y;
+        panOriginX = lbPanX; panOriginY = lbPanY;
+      }
+    }
+    if(activePointers.size === 0){
+      gestureMode = null;
+      applyLbTransform(true);
+    }
+  }
+  lightboxBoxEl.addEventListener('pointerup', endPointer);
+  lightboxBoxEl.addEventListener('pointercancel', endPointer);
+}
+
 
 /* =========================================================
    꽃잎 파티클 생성
@@ -414,11 +516,9 @@ if(lightboxBoxEl){
 
   const frag = document.createDocumentFragment();
   for(let i=0;i<PETAL_COUNT;i++){
-    const img = document.createElement('img');
-    img.className = 'petal';
-    img.src = PETAL_IMAGES[i % PETAL_IMAGES.length];
-    img.alt = '';
-    img.onerror = function(){ this.style.display = 'none'; };
+    const petal = document.createElement('div');
+    petal.className = 'petal';
+    petal.style.backgroundImage = `url(${PETAL_IMAGES[i % PETAL_IMAGES.length]})`;
 
     const duration = (10 + Math.random()*10).toFixed(1) + 's';   /* 10~20초 */
     const delay = (-Math.random()*20).toFixed(1) + 's';          /* 처음부터 화면에 흩어져 보이도록 음수 지연 */
@@ -428,15 +528,15 @@ if(lightboxBoxEl){
     const sway = Math.round(10 + Math.random()*22);               /* 10~32px, 드리프트 위에 얹히는 살랑거림 */
     const rot = Math.round(8 + Math.random()*16);                  /* 8~24deg, 완만하게 좌우로 흔들리는 회전 */
 
-    img.style.setProperty('--duration', duration);
-    img.style.setProperty('--delay', delay);
-    img.style.setProperty('--size', size);
-    img.style.setProperty('--x', x);
-    img.style.setProperty('--drift', drift);
-    img.style.setProperty('--sway', sway);
-    img.style.setProperty('--rot', rot);
+    petal.style.setProperty('--duration', duration);
+    petal.style.setProperty('--delay', delay);
+    petal.style.setProperty('--size', size);
+    petal.style.setProperty('--x', x);
+    petal.style.setProperty('--drift', drift);
+    petal.style.setProperty('--sway', sway);
+    petal.style.setProperty('--rot', rot);
 
-    frag.appendChild(img);
+    frag.appendChild(petal);
   }
   layer.appendChild(frag);
 })();
@@ -760,6 +860,19 @@ async function shareKakao(){
 async function shareCopyLink(){
   await copyText(window.location.href);
 }
+
+/* ---------- 가족사진 (배경이미지 방식 — 모바일 롱프레스 저장 방지) ---------- */
+(function initFamilyPhoto(){
+  const el = document.getElementById('familyPhoto');
+  if(!el) return;
+  const src = 'images/family-photo.png';
+  const pre = new Image();
+  pre.onload = ()=>{
+    el.style.aspectRatio = pre.naturalWidth + ' / ' + pre.naturalHeight;
+    el.style.backgroundImage = `url(${src})`;
+  };
+  pre.src = src;
+})();
 
 /* ---------- init ---------- */
 loadGuestbook().then(renderGuestbookPreview);

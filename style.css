@@ -97,7 +97,11 @@ body{
   top:-10%;
   left:calc(var(--x) * 1%);
   width:calc(var(--size) * 1px);
-  height:auto;
+  height:calc(var(--size) * 1px);
+  background-size:contain;
+  background-repeat:no-repeat;
+  background-position:center;
+  image-rendering:pixelated;
   opacity:0;
   animation-name:petalFall;
   animation-timing-function:linear;
@@ -512,6 +516,7 @@ h2.sec-title{
   max-width:92vw;
   max-height:80vh;
   padding:10px;
+  overflow:hidden; /* 확대된 사진이 액자 밖으로 삐져나오지 않도록 잘라줍니다 */
 }
 #lightboxImg{
   display:block;
@@ -522,7 +527,7 @@ h2.sec-title{
   background-position:center;
   background-repeat:no-repeat;
   touch-action:none;
-  cursor:grab;
+  cursor:default;
 }
 .lightbox-close{
   position:absolute;
@@ -629,6 +634,9 @@ h2.sec-title{
 .family-photo{
   display:block;
   width:100%;
+  background-size:contain;
+  background-repeat:no-repeat;
+  background-position:center;
 }
 
 .venue-name{ text-align:center; font-size:15px; margin-bottom:6px; font-weight:700; }
